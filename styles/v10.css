@@ -1,0 +1,51 @@
+/* V10 production pass: depth-aware WebGL image plane + physical-state feedback. */
+html[data-v10="1"] .scene{isolation:isolate;background:#0a1010}
+.v10-webgl{position:absolute;inset:0;z-index:1;width:100%;height:100%;pointer-events:none;opacity:0;transition:opacity .34s ease;transform:translateZ(0);will-change:contents}
+.scene.v10-ready>.v10-webgl{opacity:1}
+.scene.v10-ready>.scene-art{opacity:0!important;transition:opacity .28s ease!important}
+.scene.v10-fallback>.scene-art{opacity:1!important}
+.scene.v10-ready::after{z-index:3!important;pointer-events:none}
+.event-scene.v10-ready>*:not(.scene-art):not(.v10-webgl):not(.scene-paint):not(.scene-title):not(.case-stamp):not(.outcomes):not(.scene-resolution){z-index:9}
+.street-start.v10-ready .storefront,.office.v10-ready .office-room{z-index:8}
+.scene.v10-ready .scene-paint{opacity:.07!important;mix-blend-mode:soft-light!important}
+.scene.v10-ready .v9-fx{display:none!important}
+
+/* Tactile interaction surface: no floating cards, only contact shadow and state. */
+.event-scene button:not(.outcome-prop):not(.return-tab),.event-scene [role="button"],.event-scene input{touch-action:none}
+.event-scene .dragging{cursor:grabbing!important;filter:drop-shadow(0 14px 18px rgba(0,0,0,.24)) brightness(1.08)!important;transition:none!important}
+.event-scene .done>.v8-hotspot-ring,.event-scene .found>.v8-hotspot-ring,.event-scene .matched>.v8-hotspot-ring,.event-scene .verified>.v8-hotspot-ring{background:#8fd3bb!important;box-shadow:0 0 0 7px rgba(143,211,187,.08),0 0 18px rgba(143,211,187,.33)!important;opacity:.85!important}
+.v8-object-label{letter-spacing:.03em!important;border-left-width:1px!important;background:linear-gradient(90deg,rgba(5,8,8,.77),rgba(5,8,8,.48))!important}
+.scene-resolution{backdrop-filter:blur(12px) saturate(.86)!important;background:linear-gradient(160deg,rgba(17,20,18,.78),rgba(7,10,10,.86))!important;border:1px solid rgba(242,211,143,.12)!important;box-shadow:0 26px 80px rgba(0,0,0,.42)!important}
+
+/* 01: threshold experiment. */
+.ev01 .report-lab{position:absolute;left:37%;top:66%;width:31%;min-width:270px;padding:9px 12px;background:rgba(12,15,14,.70);color:#eee2c8;border-left:2px solid #d9a95d;z-index:16;backdrop-filter:blur(7px);box-shadow:0 10px 28px rgba(0,0,0,.20);font:800 11px/1.35 var(--hand)}
+.ev01 .report-lab input{width:100%;accent-color:#d8af62;cursor:ew-resize}.ev01 .report-lab output{float:right;color:#f6d690}.ev01 .report-lab.locked{opacity:.43}.ev01.threshold-found .report-lab{border-left-color:#7bc6a6}.ev01.threshold-found .printer-big{filter:drop-shadow(0 0 12px rgba(112,208,166,.26))!important}
+
+/* 02: acoustic route reconstruction. */
+.ev02 .acoustic-map{position:absolute;right:4.5%;bottom:8%;width:28%;min-width:250px;padding:10px 12px;background:rgba(8,12,13,.72);color:#e9e0cc;border-left:2px solid #76a9b6;backdrop-filter:blur(7px);font:800 10px/1.45 var(--hand);z-index:16}
+.ev02 .acoustic-map b{display:block;color:#9bcbd4;margin-bottom:4px}.ev02 .route-dot{display:inline-block;width:8px;height:8px;margin:0 5px;border-radius:50%;background:#42575a}.ev02 .route-dot.on{background:#9bcbd4;box-shadow:0 0 9px rgba(155,203,212,.55)}
+
+/* 04: formal meeting procedure becomes a physical mini-sequence. */
+.ev04 .meeting-procedure{position:absolute;left:5%;bottom:7%;width:31%;min-width:255px;padding:9px 12px;background:rgba(12,13,12,.70);color:#eee5d0;border-left:2px solid #c8a45d;backdrop-filter:blur(7px);z-index:16;font:800 10px/1.4 var(--hand)}
+.ev04 .procedure-step{display:inline-block;margin:3px 6px 3px 0;padding:3px 6px;border:1px solid rgba(235,214,166,.16)}.ev04 .procedure-step.done{color:#9bd0b6;border-color:rgba(155,208,182,.36)}
+
+/* 06: slope/load experiment. */
+.ev06 .slope-meter{position:absolute;right:5%;bottom:8%;width:29%;min-width:250px;padding:9px 12px;background:rgba(10,13,12,.72);color:#e9e0ca;border-left:2px solid #d0a754;backdrop-filter:blur(7px);z-index:16;font:800 10px/1.4 var(--hand)}
+.ev06 .slope-track{height:8px;margin:7px 0;background:linear-gradient(90deg,#56766d,#baa365 52%,#8b6f55);transform:skewX(-18deg)}.ev06 .slope-pin{display:block;width:10px;height:14px;margin-top:-11px;background:#f0d48e;transform:translateX(calc(var(--load,0)*1%));transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+
+/* 16: participants become a real verification graph. */
+.ev16 .identity-strip{position:absolute;left:6%;right:7%;bottom:6%;display:flex;gap:8px;justify-content:center;z-index:17;pointer-events:none}.ev16 .identity-chip{padding:4px 7px;background:rgba(5,9,9,.64);border-bottom:1px solid rgba(115,206,193,.22);color:#a8c8c2;font:800 9px/1.2 var(--hand);opacity:.45}.ev16 .identity-chip.verified{opacity:1;color:#d4efe8;border-color:#72c8b8}
+
+/* Low motion keeps the authored grade but freezes parallax/impulses. */
+.low-motion .v10-webgl{transition:none!important}.low-motion .event-scene .dragging{filter:none!important}
+@media(max-width:760px){.ev01 .report-lab,.ev02 .acoustic-map,.ev04 .meeting-procedure,.ev06 .slope-meter{left:4%!important;right:4%!important;bottom:15%!important;width:auto!important;min-width:0!important;font-size:9px!important}.ev16 .identity-strip{bottom:14%;gap:4px;flex-wrap:wrap}.ev16 .identity-chip{font-size:8px}}
+.ev01 .printer-big.accepting{filter:drop-shadow(0 0 14px rgba(119,209,169,.34))!important}.ev01 .report-lab input:disabled{cursor:not-allowed;opacity:.45}
+.ev02 .acoustic-map button{margin-top:7px;padding:5px 8px;border:1px solid rgba(155,203,212,.3)!important;background:rgba(10,18,20,.55)!important;color:#c9e5e8!important;font:800 10px/1.2 var(--hand)!important}.ev02 .acoustic-map button:disabled{opacity:.38}.ev02.trace-replay .marble{animation:v10AcousticTrace .78s cubic-bezier(.25,.6,.2,1)!important}@keyframes v10AcousticTrace{0%{translate:-120px 120px;opacity:.2}35%{translate:-35px 50px;opacity:1}70%{translate:35px -20px;opacity:1}100%{translate:85px -92px;opacity:.35}}
+.ev04 .signsheet.pawed{filter:drop-shadow(0 0 10px rgba(209,172,95,.28))!important}.ev04 .meeting-procedure small{display:block;margin-top:5px;color:#cfc4aa}.ev04 .procedure-step.done::before{content:'✓ ';color:#90d1b1}
+.ev06 #hillTarget{position:absolute;right:12%;top:21%;width:130px;height:64px;border:0!important;background:transparent!important;color:transparent!important;z-index:15;cursor:pointer}.ev06 #hillTarget:focus-visible{outline:2px solid #e7c878!important}.ev06 .bike.at-top{filter:drop-shadow(0 0 11px rgba(128,214,174,.34))!important}.ev06 .bike.accept{filter:drop-shadow(0 0 15px rgba(115,220,172,.52))!important}.ev06 .slope-meter b{color:#f1d798}.ev06 .slope-meter small{display:block;color:#c9bfaa}
+.ev16 .identity-strip{pointer-events:auto}.ev16 .identity-chip{border:0!important;cursor:pointer;pointer-events:auto!important}.ev16 .identity-chip:focus-visible{outline:1px solid #72c8b8!important;outline-offset:3px}.ev16 .identity-chip.verified::before{content:'✓ '}
+
+/* V10 tactile object dynamics: velocity tilt while held, damped spring on release. */
+.event-scene .dragging{rotate:var(--drag-r,0deg)!important;scale:var(--drag-lift,1.015)!important;transform-origin:50% 58%!important}
+.event-scene .v10-release{transition:translate .30s cubic-bezier(.16,.88,.24,1.08),rotate .26s ease,scale .22s ease,filter .24s ease!important}
+.low-motion .event-scene .dragging{rotate:0deg!important;scale:1!important}.low-motion .event-scene .v10-release{transition:none!important}

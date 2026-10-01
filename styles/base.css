@@ -1,0 +1,204 @@
+:root{
+  --paper:#eee2c7;--paper-hi:#fff5d9;--paper-lo:#dcc7a0;--ink:#273b3d;--ink-soft:#586b68;
+  --teal:#6f9b8e;--teal-deep:#426f69;--coral:#d77b5d;--mustard:#e5bb56;--blue:#7895a6;
+  --green:#7d9a77;--brown:#9b6e4c;--cream:#fff7e3;--red:#b95749;--plum:#745c72;
+  --shadow:rgba(39,59,61,.16);--hand:"Kaiti SC","KaiTi","STKaiti","FangSong",serif;
+  --sans:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--paper);color:var(--ink);font-family:var(--sans)}
+button,input{font:inherit;color:inherit}
+button{touch-action:manipulation}
+button:focus-visible,[role="button"]:focus-visible,input:focus-visible{outline:3px solid #f5b73d;outline-offset:4px}
+body::before{content:"";position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:.2;mix-blend-mode:multiply;background:
+ radial-gradient(circle at 11% 22%,rgba(38,55,57,.13) 0 .6px,transparent .8px),
+ radial-gradient(circle at 67% 41%,rgba(116,86,59,.1) 0 .7px,transparent .9px),
+ radial-gradient(circle at 33% 78%,rgba(255,255,255,.55) 0 .7px,transparent .9px);background-size:19px 17px,23px 21px,29px 27px}
+.svg-defs{position:absolute}
+.app{position:fixed;inset:0;overflow:hidden;isolation:isolate}
+.scene{position:absolute;inset:0;overflow:hidden;transform:translateZ(0)}
+.scene::after{content:"";position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 110px rgba(59,50,35,.09);z-index:40}
+
+/* 字幕不是视频黑条，而像工作人员随手贴在视野里的记录纸。 */
+.subtitle{position:fixed;z-index:120;left:clamp(18px,4vw,72px);bottom:clamp(18px,4.6vh,46px);max-width:min(620px,76vw);padding:13px 18px 14px 19px;background:rgba(255,247,225,.96);border:0;color:var(--ink);font:700 clamp(14px,1.4vw,17px)/1.65 var(--hand);letter-spacing:.02em;box-shadow:0 7px 0 rgba(39,59,61,.08),0 13px 26px rgba(39,59,61,.12);clip-path:polygon(1% 8%,98% 0,100% 84%,94% 100%,3% 94%,0 24%);opacity:0;transform:translateY(8px) rotate(-.5deg);transition:.2s ease;pointer-events:none}
+.subtitle:not(:empty){opacity:1;transform:translateY(0) rotate(-.5deg)}
+.subtitle::before{content:"记录";display:inline-block;margin-right:9px;font:900 10px/1 var(--sans);letter-spacing:.16em;color:var(--red);vertical-align:2px}
+body[data-scene="event"] .subtitle{bottom:24px}
+body[data-event="5"] .subtitle,body[data-event="13"] .subtitle{left:22px;max-width:520px}
+body[data-event="15"] .subtitle{background:rgba(248,239,207,.9)}
+
+/* 系统功能缩成夹在画面边缘的三张纸签，默认几乎看不见。 */
+.system-controls{position:fixed;z-index:160;right:-4px;top:22px;display:flex;flex-direction:column;gap:5px;opacity:.23;transition:.2s ease}
+.system-controls:hover,.system-controls:focus-within{opacity:.96;right:5px}
+.sys-btn{width:46px;height:46px;border:0;background:#f7ebce;cursor:pointer;box-shadow:0 4px 0 rgba(39,59,61,.12);font:900 15px/1 var(--hand);clip-path:polygon(6% 4%,100% 0,94% 94%,0 100%);transform:rotate(var(--sr,-1deg));transition:.16s}
+.sys-btn:nth-child(2){--sr:1.5deg;background:#e5cf93}.sys-btn:nth-child(3){--sr:-2deg;background:#d8c8a8}
+.sys-btn:hover{transform:translateX(-4px) rotate(0) scale(1.04)}
+.toast{position:fixed;z-index:190;right:22px;bottom:22px;max-width:min(330px,80vw);padding:12px 15px;background:#31494a;color:#fff4d9;font:700 13px/1.45 var(--hand);box-shadow:6px 7px rgba(39,59,61,.16);transform:translateY(120px) rotate(1deg);opacity:0;transition:.26s ease;clip-path:polygon(2% 7%,100% 0,96% 97%,0 92%)}
+.toast.show{transform:translateY(0) rotate(1deg);opacity:1}
+
+/* ---------- 开场街景：不作为主页，而是一段可以推门进入的短场景 ---------- */
+.street-start{background:linear-gradient(#b9d3c8 0 57%,#d9c4a0 57% 74%,#98775e 74%);perspective:1100px}
+.street-start::before{content:"";position:absolute;left:-3%;right:-3%;bottom:22%;height:11%;background:#826b5a;transform:skewY(-1deg);box-shadow:0 -5px #66574b,0 15px rgba(255,255,255,.12)}
+.street-cloud{position:absolute;left:9%;top:10%;width:160px;height:46px;background:#f6efd9;border-radius:48% 52% 46% 54%;opacity:.72;filter:url(#wobble)}
+.street-cloud::before,.street-cloud::after{content:"";position:absolute;background:inherit;border-radius:50%}.street-cloud::before{width:62px;height:62px;left:25px;top:-23px}.street-cloud::after{width:78px;height:54px;right:20px;top:-18px}
+.wire-bird{position:absolute;top:16%;right:15%;font:900 32px/1 var(--hand);transform:rotate(-8deg);opacity:.6}
+.neighbor{position:absolute;bottom:23%;height:43%;background:#cfb58b;box-shadow:0 12px rgba(61,68,62,.13);filter:url(#rough)}
+.neighbor::before{content:attr(data-label);position:absolute;top:12%;left:12%;font:900 24px/1 var(--hand);transform:rotate(-2deg)}
+.neighbor::after{content:"";position:absolute;left:13%;right:13%;bottom:14%;height:43%;background:repeating-linear-gradient(90deg,#739492 0 25%,#587571 25% 28%,#ecd8ad 28% 48%);border:5px solid var(--ink)}
+.neighbor.left{left:-3%;width:31%;transform:rotateY(5deg);background:#d8b678}.neighbor.right{right:-4%;width:31%;transform:rotateY(-5deg);background:#c58a6b}
+.storefront{position:absolute;left:29%;right:29%;bottom:21%;height:58%;background:#e8d3a6;box-shadow:15px 19px 0 rgba(39,59,61,.12);filter:url(#rough);transform:translateZ(20px)}
+.storefront::before{content:"";position:absolute;left:-3%;right:-3%;top:-7%;height:8%;background:var(--ink);clip-path:polygon(0 55%,7% 14%,17% 45%,27% 4%,38% 43%,50% 0,62% 45%,73% 8%,84% 44%,94% 5%,100% 48%,100% 100%,0 100%)}
+.awning{position:absolute;left:7%;right:7%;top:26%;height:13%;background:repeating-linear-gradient(90deg,#c96d56 0 13%,#f3dfb5 13% 26%);transform:skewX(-4deg);box-shadow:0 7px rgba(39,59,61,.1)}
+.shop-sign{position:absolute;left:12%;right:12%;top:6%;text-align:center;font:900 clamp(38px,5vw,78px)/1 var(--hand);letter-spacing:.16em;transform:rotate(-1.5deg);text-shadow:2px 3px rgba(255,255,255,.46)}
+.shop-sub{position:absolute;left:10%;right:10%;top:41%;text-align:center;font:700 clamp(12px,1.2vw,16px)/1.7 var(--hand)}
+.shop-sub small{opacity:.68}
+.shop-door{position:absolute;left:29%;right:29%;bottom:0;height:38%;border:5px solid var(--ink);background:#6f8d84;cursor:pointer;box-shadow:inset 0 0 0 9px rgba(247,231,194,.18);transition:.25s;transform-origin:left center}
+.shop-door::before{content:"推";position:absolute;left:50%;top:22%;transform:translateX(-50%) rotate(2deg);font:900 18px/1 var(--hand);background:#f3e1b6;padding:8px 11px;clip-path:polygon(2% 6%,100% 0,94% 100%,0 92%)}
+.shop-door:hover{transform:perspective(700px) rotateY(-9deg)}
+.door-knob{position:absolute;right:13%;top:53%;width:13px;height:13px;border-radius:50%;background:#d7b04e;box-shadow:0 0 0 3px #314547}
+
+/* ---------- 怪事屋办公室：立体布景，不是功能入口排版 ---------- */
+.office{background:#d8cab0;perspective:1200px}
+.office-room{position:absolute;inset:0;background:
+ linear-gradient(166deg,transparent 0 74%,rgba(51,68,68,.08) 74% 75%,transparent 75%),
+ linear-gradient(#e6d9bc 0 69%,#ad805e 69% 100%);overflow:hidden}
+.office-room::before{content:"";position:absolute;left:-5%;right:-5%;top:0;height:16%;background:#d5c39f;clip-path:polygon(0 0,100% 0,96% 76%,2% 100%);box-shadow:0 5px rgba(58,70,67,.06)}
+.office-room::after{content:"";position:absolute;left:-8%;right:-8%;bottom:-16%;height:37%;background:repeating-linear-gradient(97deg,#9e7356 0 46px,#966b50 46px 49px);transform:perspective(600px) rotateX(59deg);transform-origin:bottom;opacity:.78}
+.office-window{position:absolute;left:8%;top:18%;width:25%;height:30%;border:8px solid #4e6663;background:linear-gradient(#8fb6b2,#e1c78f);box-shadow:0 8px rgba(39,59,61,.1);z-index:2;overflow:hidden}
+.office-window::before{content:"";position:absolute;left:49%;top:0;bottom:0;width:5px;background:#4e6663}.office-window::after{content:"";position:absolute;left:0;right:0;top:52%;height:5px;background:#4e6663}
+.moon-peek{position:absolute;right:12%;top:13%;width:42px;height:42px;border-radius:50%;background:#f1d06a;box-shadow:0 0 22px rgba(241,208,106,.35);opacity:0;transform:translateX(32px);transition:.5s}.office-window.has-moon .moon-peek{opacity:1;transform:translateX(0)}
+.office-door{position:absolute;right:6%;top:18%;width:13%;height:47%;border:0;border-left:7px solid #3f5554;border-right:7px solid #3f5554;background:#759589;z-index:3;cursor:pointer;box-shadow:inset 0 0 0 8px rgba(245,233,204,.16);clip-path:polygon(3% 0,99% 2%,96% 100%,0 98%)}
+.office-door::before{content:"";position:absolute;right:12%;top:50%;width:13px;height:13px;border-radius:50%;background:#dfb657;box-shadow:0 0 0 3px #3d5251}
+.office-door::after{content:"门口";position:absolute;top:17%;left:50%;transform:translateX(-50%) rotate(-2deg);font:900 12px/1 var(--hand);background:#e8d7ac;padding:6px 8px}
+.archive{position:absolute;right:21%;top:28%;width:12%;height:39%;background:#7d927e;border:0;box-shadow:7px 9px rgba(39,59,61,.12);z-index:4;cursor:pointer;filter:url(#rough)}
+.archive::before{content:"";position:absolute;left:12%;right:12%;top:11%;bottom:9%;background:repeating-linear-gradient(180deg,#a7b39b 0 19%,#415758 19% 21%,#8c9d87 21% 39%);border:3px solid #394f4f}
+.archive::after{content:"档案";position:absolute;left:50%;top:-28px;transform:translateX(-50%) rotate(3deg);font:900 13px/1 var(--hand);background:#e8d6a5;padding:5px 10px;box-shadow:3px 4px rgba(39,59,61,.08)}
+.boss-desk,.player-desk{position:absolute;z-index:5;background:#9d6f4e;box-shadow:0 13px 0 #835b43,9px 15px rgba(39,59,61,.1);filter:url(#rough)}
+.boss-desk{left:39%;top:37%;width:27%;height:14%;transform:rotate(-1deg)}
+.player-desk{left:28%;bottom:7%;width:47%;height:17%;transform:perspective(600px) rotateX(4deg) rotate(.6deg)}
+.player-desk::before{content:"";position:absolute;left:4%;right:4%;bottom:100%;height:12px;background:#b9865f;transform:skewX(-14deg)}
+.boss-chair{position:absolute;left:48%;top:50%;width:76px;height:100px;border:0;background:#526f6b;z-index:4;cursor:pointer;border-radius:38% 38% 18% 18%;box-shadow:0 9px 0 #3e5c59;transform-origin:50% 86%;transition:.35s cubic-bezier(.25,.8,.25,1)}
+.boss-chair::before{content:"";position:absolute;left:16%;right:16%;top:-23px;height:54px;border:5px solid #394d4d;border-bottom:0;border-radius:50% 50% 0 0}
+.boss-chair::after{content:"";position:absolute;left:47%;bottom:-28px;width:6px;height:31px;background:#394d4d;box-shadow:-22px 26px 0 -1px #394d4d,22px 26px 0 -1px #394d4d}
+.office-printer{position:absolute;left:30%;bottom:22%;width:150px;height:90px;border:0;background:#e7dec9;z-index:8;cursor:pointer;box-shadow:7px 9px rgba(39,59,61,.12);clip-path:polygon(2% 4%,97% 0,100% 88%,91% 100%,4% 96%,0 17%);transition:.2s}
+.office-printer::before{content:"";position:absolute;left:19%;right:18%;top:22%;height:22px;background:#405a59;border-radius:4px;box-shadow:0 37px 0 -5px #8e9d92}
+.office-printer::after{content:"";position:absolute;right:17%;top:15%;width:8px;height:8px;border-radius:50%;background:#88b985;box-shadow:0 0 0 3px rgba(39,59,61,.12)}
+.office-phone{position:absolute;left:53%;bottom:24%;width:104px;height:62px;border:0;background:#c57458;z-index:9;cursor:pointer;box-shadow:6px 7px rgba(39,59,61,.12);border-radius:18px 18px 12px 12px}
+.office-phone::before{content:"";position:absolute;left:7%;right:7%;top:-12px;height:23px;border-radius:28px;background:#b9674f;border:4px solid #374b4c}
+.office-phone::after{content:"";position:absolute;left:41%;top:27%;width:20px;height:20px;border-radius:50%;border:4px dotted #f0d6a6}
+.office-computer{position:absolute;left:65%;bottom:24%;width:128px;height:88px;border:0;background:#415a5a;z-index:8;cursor:pointer;box-shadow:6px 8px rgba(39,59,61,.12)}
+.office-computer::before{content:"群?";position:absolute;inset:9px;background:#c7d0b2;color:#435453;display:grid;place-items:center;font:900 21px/1 var(--hand);transition:.2s}
+.office-computer::after{content:"";position:absolute;left:44%;bottom:-24px;width:16px;height:24px;background:#425857;box-shadow:-19px 21px 0 12px #526765}
+.office-mail{position:absolute;right:12%;bottom:22%;width:84px;height:46px;border:0;background:#efe1ba;z-index:9;cursor:pointer;box-shadow:5px 6px rgba(39,59,61,.1);transform:rotate(5deg);clip-path:polygon(0 7%,100% 0,94% 100%,5% 94%)}
+.office-mail::before{content:"来件";font:900 12px/1 var(--hand)}
+.desk-trigger{position:absolute;left:43%;bottom:10%;z-index:12;min-width:130px;max-width:190px;border:0;background:#f2e3b8;padding:12px 15px;font:800 13px/1.45 var(--hand);cursor:pointer;transform:rotate(-2deg);box-shadow:4px 6px rgba(39,59,61,.1);clip-path:polygon(3% 0,100% 4%,96% 95%,0 100%)}
+.office-fridge{position:absolute;left:5%;bottom:5%;width:12%;height:33%;border:0;background:#c9d2c3;z-index:4;cursor:pointer;box-shadow:7px 9px rgba(39,59,61,.11);clip-path:polygon(2% 0,96% 3%,100% 98%,0 100%)}
+.office-fridge::before{content:"";position:absolute;left:0;right:0;top:34%;height:5px;background:#4b6260}.office-fridge::after{content:"谁的?";position:absolute;right:7%;top:13%;font:800 10px/1 var(--hand);background:#efdb89;padding:4px;transform:rotate(4deg)}
+.honor-wall-object{position:absolute;left:4%;top:51%;width:20%;height:12%;border:0;background:transparent;z-index:4;cursor:pointer}
+.honor-wall-object::before{content:"优秀员工荣誉墙";position:absolute;left:5%;right:0;top:0;padding:9px 7px;background:#d8b35e;border-bottom:4px solid #435856;font:900 13px/1 var(--hand);transform:rotate(-1deg)}
+.honor-wall-object::after{content:"★   ★      ★";position:absolute;left:18%;top:42px;color:#a45445;letter-spacing:8px;font-size:16px;opacity:.7}
+.office-note{position:absolute;left:38%;top:19%;z-index:3;font:900 clamp(17px,2vw,28px)/1.1 var(--hand);transform:rotate(-3deg);background:#f2e2b0;padding:8px 12px;clip-path:polygon(2% 4%,100% 0,96% 100%,0 92%)}
+.trigger-label{position:absolute;left:30%;bottom:1.8%;z-index:14;font:800 12px/1.4 var(--hand);opacity:.65}
+.office-progress{position:absolute;right:4%;bottom:2.4%;z-index:14;font:700 11px/1 var(--hand);opacity:.55;letter-spacing:.06em}
+.continue-sign{position:absolute;left:38%;top:27%;z-index:12;background:#e8c962;padding:10px 14px;font:800 13px/1.4 var(--hand);transform:rotate(2deg)}
+.office-trigger{animation:officeNudge 1.5s ease-in-out infinite}.office-phone.ringing{animation:ring .75s ease-in-out infinite}
+@keyframes officeNudge{0%,100%{filter:brightness(1)}50%{filter:brightness(1.13) drop-shadow(0 0 7px rgba(228,186,86,.45))}}
+@keyframes ring{0%,100%{transform:rotate(0)}20%{transform:rotate(-4deg)}40%{transform:rotate(4deg)}60%{transform:rotate(-3deg)}80%{transform:rotate(2deg)}}
+.office-deco{position:absolute;z-index:10;font:800 10px/1.2 var(--hand);background:#f1dfaf;padding:5px 7px;box-shadow:3px 4px rgba(39,59,61,.08)}
+.deco-drink{left:63%;bottom:20%;transform:rotate(3deg)}.deco-paw{left:7%;top:58%;background:#d9b06a}.deco-tuesday{right:22%;top:31%;transform:rotate(-4deg);background:#f1c86d}.deco-review{left:25%;top:23%;background:#f1e8d3;color:#a64b40}.deco-license{left:3%;top:9%;background:#e9d39d}.deco-breakfast{left:57%;bottom:17%;background:#e4c06a}.deco-plant{left:15%;top:39%;background:#a8bb84}
+
+/* ---------- 结算：像处理完事情后留下的一页现场记录，而不是弹窗 ---------- */
+.resolve-scene{background:#d9c7a5;display:grid;place-items:center}
+.resolve-scene::before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,rgba(255,255,255,.22),transparent 45%),repeating-linear-gradient(90deg,transparent 0 90px,rgba(55,66,62,.035) 90px 92px)}
+.resolve-sheet{position:relative;width:min(720px,86vw);min-height:370px;padding:54px 62px 50px;background:#fff2d2;box-shadow:14px 18px rgba(39,59,61,.12);transform:rotate(-.7deg);clip-path:polygon(1% 2%,98% 0,100% 92%,92% 100%,2% 97%,0 9%);font:700 17px/1.85 var(--hand)}
+.resolve-sheet::before{content:"处理记录";position:absolute;right:46px;top:24px;color:#a75649;font:900 13px/1 var(--sans);letter-spacing:.22em;border:2px solid currentColor;padding:6px 8px;transform:rotate(4deg)}
+.resolve-sheet h2{margin:0 0 22px;font:900 clamp(28px,4vw,48px)/1.15 var(--hand);max-width:82%}.resolve-sheet p{max-width:590px}
+.ending-stamp{display:inline-block;margin-top:14px;padding:8px 14px;border:4px solid #a75649;color:#a75649;font:900 23px/1 var(--hand);transform:rotate(-7deg)}
+.return-tab,.wall-back{border:0;background:#415f5d;color:#fff2d4;padding:11px 18px;font:800 14px/1 var(--hand);cursor:pointer;clip-path:polygon(2% 7%,100% 0,94% 100%,0 92%);box-shadow:4px 5px rgba(39,59,61,.13)}
+.return-tab:hover,.wall-back:hover{transform:translateY(-2px) rotate(-1deg)}
+
+/* ---------- 荣誉墙：成就变成办公室实物 ---------- */
+.achievement-wall{position:absolute;inset:0;background:linear-gradient(#d8c6a4 0 75%,#9a7154 75%);overflow:auto;padding:4vh 4vw 12vh}
+.wall-space{position:relative;min-height:1100px;border:14px solid #7b5c43;background:#e8d8b8;box-shadow:inset 0 0 0 5px #aa7b55,12px 15px rgba(39,59,61,.12)}
+.wall-space::before{content:"怪事屋 · 优秀员工荣誉墙";position:absolute;left:4%;top:3%;font:900 clamp(26px,4vw,54px)/1 var(--hand);transform:rotate(-1deg)}
+.wall-space::after{content:"老板坚持这些都不叫‘成就’。";position:absolute;right:5%;top:4%;font:700 13px/1.3 var(--hand);opacity:.65;transform:rotate(2deg)}
+.award{position:absolute;width:170px;min-height:76px;padding:12px 13px;background:#d6c9ac;transform:rotate(var(--r));box-shadow:5px 7px rgba(39,59,61,.1);clip-path:polygon(1% 7%,97% 0,100% 92%,5% 100%,0 23%);filter:saturate(.65)}
+.award.unlocked{background:#f1dfad;filter:none}.award.type-冷幽默.unlocked{background:#d9c0a5}.award.type-隐藏.unlocked{background:#bfd0b1}
+.award b{display:block;font:900 16px/1.2 var(--hand);margin-bottom:6px}.award small{font:700 10px/1.4 var(--hand);opacity:.76}.wall-back{position:fixed;left:24px;bottom:22px;z-index:5}
+
+/* ---------- 档案柜：文件直接从抽屉里摊开 ---------- */
+.archive-scene{background:#c9b898;overflow:auto;padding:6vh 6vw 12vh}
+.archive-scene::before{content:"";position:fixed;inset:0;background:linear-gradient(95deg,rgba(255,255,255,.13),transparent 36%),repeating-linear-gradient(0deg,transparent 0 28px,rgba(55,65,62,.025) 28px 30px);pointer-events:none}
+.archive-drawer{position:relative;max-width:980px;margin:auto;padding:46px 54px 80px;background:#8d755b;box-shadow:15px 18px rgba(39,59,61,.14);min-height:82vh;clip-path:polygon(1% 0,99% 2%,100% 97%,2% 100%,0 4%)}
+.archive-drawer::before{content:"档案抽屉";position:absolute;right:6%;top:15px;color:#f3dfb5;font:900 15px/1 var(--hand);letter-spacing:.14em}
+.archive-drawer h2{color:#fff0ca;font:900 clamp(30px,4vw,52px)/1 var(--hand);margin:0 0 35px}
+.file-row{display:block;position:relative;width:92%;margin:0 0 10px;padding:15px 22px 16px 34px;border:0;background:#f2e4c7;text-align:left;cursor:pointer;box-shadow:5px 6px rgba(39,59,61,.09);transform:rotate(var(--fr,-.3deg));clip-path:polygon(0 3%,99% 0,100% 94%,4% 100%)}
+.file-row:nth-of-type(3n){--fr:.5deg}.file-row:nth-of-type(4n){--fr:-.8deg}.file-row::before{content:"";position:absolute;left:12px;top:13px;width:8px;height:8px;border-radius:50%;background:#b25f4c}
+.file-row strong{display:block;font:900 15px/1.25 var(--hand)}.file-row span{display:block;margin-top:5px;font:700 11px/1.35 var(--hand);opacity:.68}.file-row:hover{transform:translateX(8px) rotate(0)}.empty-file{opacity:.35;cursor:default}
+
+/* ---------- 设置：抽出一张夹在场景里的值班登记纸 ---------- */
+.settings-curtain{position:fixed;z-index:180;inset:0;background:rgba(37,52,52,.36);display:grid;place-items:center;backdrop-filter:blur(2px)}
+.settings-paper{width:min(520px,88vw);max-height:86vh;overflow:auto;background:#f6e7c6;padding:37px 42px 34px;box-shadow:14px 17px rgba(39,59,61,.18);clip-path:polygon(1% 1%,99% 0,100% 96%,93% 100%,0 97%);transform:rotate(.4deg)}
+.settings-paper h2{margin:0 0 20px;font:900 34px/1 var(--hand)}
+.setting-row{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:11px 0;border-bottom:1px dashed rgba(39,59,61,.35);font:700 14px/1.3 var(--hand)}
+.setting-row button{border:0;background:transparent;border-bottom:3px solid #496662;font:900 13px/1 var(--hand);padding:7px 9px;cursor:pointer}.danger-link{color:#a2483f!important;border-color:#a2483f!important}.settings-paper>small{display:block;margin-top:20px;line-height:1.6;opacity:.63}
+
+/* 通用低动态/大字号 */
+.low-motion *, .low-motion *::before,.low-motion *::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+.large-text .subtitle{font-size:18px}.large-text .scene-title{font-size:clamp(22px,3vw,34px)!important}.large-text button{font-size:max(14px,1em)}
+
+@media(max-width:760px){
+ .system-controls{top:10px}.sys-btn{width:44px;height:44px}
+ .subtitle{left:12px;bottom:12px;max-width:82vw;font-size:13px;padding:11px 13px}
+ .neighbor{display:none}.storefront{left:10%;right:10%;height:61%;bottom:20%}.shop-sign{font-size:48px}.shop-door{left:25%;right:25%}
+ .office-window{left:4%;top:15%;width:31%;height:25%}.office-door{right:2%;top:18%;width:18%;height:43%}.archive{right:22%;top:31%;width:16%;height:32%}
+ .boss-desk{left:36%;top:37%;width:29%;height:12%}.player-desk{left:18%;width:64%;height:18%}.boss-chair{left:45%;top:48%;transform:scale(.83)}
+ .office-printer{left:21%;bottom:22%;width:125px;height:78px}.office-phone{left:50%;bottom:23%;width:85px}.office-computer{left:68%;bottom:22%;width:92px;height:73px}.office-mail{right:5%;bottom:20%}
+ .office-fridge{left:2%;width:16%;height:30%}.honor-wall-object{left:2%;top:47%;width:27%}.office-note{left:33%;top:16%;font-size:17px}.desk-trigger{left:39%;bottom:8%;font-size:11px;min-width:110px}.trigger-label{left:20%;max-width:65%;font-size:10px}.office-progress{display:none}
+ .resolve-sheet{width:91vw;padding:46px 28px 38px}.resolve-sheet h2{font-size:30px}
+ .archive-scene{padding:4vh 3vw 12vh}.archive-drawer{padding:38px 20px 70px}.file-row{width:100%;padding-left:26px}
+ .award{width:140px}.wall-space{min-height:1300px}
+}
+.ceiling-lamp{position:absolute;left:46%;top:5%;width:86px;height:25px;background:#e3c768;border:5px solid #485d5a;z-index:2;box-shadow:0 18px 35px rgba(230,199,104,.2)}
+.ceiling-lamp::before{content:"";position:absolute;left:39px;bottom:100%;width:6px;height:55px;background:#52635f}
+.coat-hook{position:absolute;right:4%;top:8%;width:130px;height:72px;border-bottom:5px solid #52635f;z-index:2}.coat-hook i{position:absolute;bottom:-1px;width:5px;height:32px;background:#52635f;transform-origin:top}.coat-hook i:nth-child(1){left:23px;transform:rotate(20deg)}.coat-hook i:nth-child(2){left:63px;transform:rotate(-14deg)}.coat-hook i:nth-child(3){right:20px;transform:rotate(14deg)}
+.pinboard{position:absolute;left:36%;top:17%;width:26%;height:15%;background:#bc8e61;box-shadow:5px 7px rgba(39,59,61,.09);z-index:2;transform:rotate(-1deg);padding:14px 18px;font:800 10px/1.4 var(--hand)}.pinboard span,.pinboard b{position:absolute;background:#f0dfa9;padding:5px 7px;box-shadow:2px 3px rgba(39,59,61,.08)}.pinboard span{left:9%;top:16%;transform:rotate(-4deg)}.pinboard b{right:5%;bottom:12%;transform:rotate(3deg);font-weight:800;background:#d8d2b3}
+.boss-mug{position:absolute;right:10%;top:-27px;width:37px;height:42px;background:#d9bd67;border-radius:5px 5px 15px 15px;box-shadow:0 4px rgba(39,59,61,.1)}.boss-mug::after{content:"";position:absolute;right:-13px;top:9px;width:17px;height:18px;border:5px solid #d9bd67;border-left:0;border-radius:0 50% 50% 0}.paper-pile{position:absolute;left:9%;top:-17px;width:74px;height:14px;background:#ede2c4;box-shadow:4px 5px 0 #d9c8a4,8px 10px 0 #f3e6c9;transform:rotate(-3deg)}
+.floor-paper{position:absolute;left:76%;bottom:5%;z-index:5;width:150px;background:#ead9ae;padding:8px 10px;font:800 9px/1.4 var(--hand);transform:rotate(7deg);box-shadow:3px 4px rgba(39,59,61,.08);clip-path:polygon(2% 5%,100% 0,95% 100%,0 92%)}
+@media(max-width:760px){.pinboard{left:34%;top:16%;width:34%;font-size:7px}.coat-hook{display:none}.ceiling-lamp{left:43%;transform:scale(.8)}.floor-paper{display:none}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+/* 系统页签只露出小标签，保留 44px 触摸热区但不让它像固定导航。 */
+.sys-btn{background:transparent;box-shadow:none;clip-path:none;display:grid;place-items:center}
+.sys-btn span{display:grid;place-items:center;width:30px;height:36px;background:#efe2bf;box-shadow:3px 4px rgba(39,59,61,.08);clip-path:polygon(3% 4%,100% 0,94% 96%,0 100%);font:900 12px/1 var(--hand);opacity:.7}
+.sys-btn:hover span,.sys-btn:focus-visible span{opacity:1;background:#f3dfa5}
+@media(max-width:760px){.system-controls{right:-8px;opacity:.14}.system-controls:focus-within{right:2px;opacity:.92}.sys-btn span{width:24px;height:30px;font-size:10px}}
+body.choosing .subtitle{left:50%;bottom:auto;top:9%;max-width:min(560px,62vw);transform:translateX(-50%) rotate(-.5deg);opacity:.92}
+@media(max-width:760px){body.choosing .subtitle{top:9%;left:50%;max-width:72vw;font-size:11px}}
+.office-printer::after{box-shadow:-18px 0 0 #9bae83,0 0 0 3px rgba(39,59,61,.12),-18px 0 0 3px rgba(39,59,61,.12)}
+
+
+/* V2.0: each case speaks through a different piece of paper / local medium instead of one generic subtitle widget. */
+body[data-event="1"] .subtitle::before{content:"打印纸"} body[data-event="1"] .subtitle{left:auto;right:5%;background:#f2e1ba;transform:rotate(1deg)}
+body[data-event="2"] .subtitle::before{content:"听音记录"} body[data-event="2"] .subtitle{left:4%;background:#e9ddbf;clip-path:polygon(0 4%,98% 0,100% 92%,4% 100%)}
+body[data-event="3"] .subtitle::before{content:"机器回执"} body[data-event="3"] .subtitle{left:auto;right:5%;background:#e9d5a7}
+body[data-event="4"] .subtitle::before{content:"会议纪要"} body[data-event="4"] .subtitle{left:5%;background:#efe0b8}
+body[data-event="5"] .subtitle::before{content:"物业便签"} body[data-event="5"] .subtitle{left:3%;background:#ded4b9;color:#364c4d}
+body[data-event="6"] .subtitle::before{content:"运维备注"} body[data-event="6"] .subtitle{left:auto;right:5%;background:#e5d4a9}
+body[data-event="7"] .subtitle::before{content:"失物标签"} body[data-event="7"] .subtitle{left:4%;background:#e6cf96}
+body[data-event="8"] .subtitle::before{content:"快递员口述"} body[data-event="8"] .subtitle{left:auto;right:4%;background:#ecdfbe}
+body[data-event="9"] .subtitle::before{content:"店里听见"} body[data-event="9"] .subtitle{left:5%;background:#f0ddb0}
+body[data-event="10"] .subtitle::before{content:"箱内便签"} body[data-event="10"] .subtitle{left:auto;right:5%;background:#f0deb5}
+body[data-event="11"] .subtitle::before{content:"影子意见"} body[data-event="11"] .subtitle{left:5%;background:#e2d6b9}
+body[data-event="12"] .subtitle::before{content:"天气备注"} body[data-event="12"] .subtitle{left:auto;right:5%;background:#d9e2c7}
+body[data-event="13"] .subtitle::before{content:"车内记录"} body[data-event="13"] .subtitle{left:3%;background:#e5d9bc}
+body[data-event="14"] .subtitle::before{content:"复检记录"} body[data-event="14"] .subtitle{left:auto;right:4%;background:#e7e0c7}
+body[data-event="15"] .subtitle::before{content:"屋顶笔记"} body[data-event="15"] .subtitle{left:4%;background:rgba(236,222,185,.93)}
+body[data-event="16"] .subtitle::before{content:"群外备注"} body[data-event="16"] .subtitle{left:auto;right:4%;background:#e8d7ae}
+body[data-event="17"] .subtitle::before{content:"自查表"} body[data-event="17"] .subtitle{left:5%;background:#eaddbc}
+body[data-event="18"] .subtitle::before{content:"听证笔录"} body[data-event="18"] .subtitle{left:auto;right:5%;background:#eadab3}
+body[data-event="19"] .subtitle::before{content:"街道通知"} body[data-event="19"] .subtitle{left:4%;background:#eed06d}
+body[data-event="20"] .subtitle::before{content:"现场检查"} body[data-event="20"] .subtitle{left:auto;right:4%;background:#ead9b2}
+@media(max-width:760px){
+ body[data-scene="event"] .subtitle{left:12px!important;right:auto!important;max-width:82vw}
+ body.choosing[data-scene="event"] .subtitle{left:50%!important;right:auto!important}
+}

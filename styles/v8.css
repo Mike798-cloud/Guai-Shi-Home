@@ -1,0 +1,115 @@
+/* V8 — 终稿微缩剧场：把交互退到场景里，而不是把场景装进网页组件。 */
+:root{--v8-gold:#e9bd67;--v8-ink:#f4ecd8;--v8-night:#0b1112}
+body{background:#0b1112!important;color:var(--v8-ink)!important}
+.scene{background:#111819!important;overflow:hidden;isolation:isolate}
+.scene-art{inset:-4%!important;width:108%!important;height:108%!important;object-fit:cover!important;transform:translate3d(calc(var(--v8-x,0)*-9px),calc(var(--v8-y,0)*-6px),0) scale(1.075)!important;filter:saturate(1.04) contrast(1.055) brightness(1.01)!important;transition:filter .5s ease!important}
+.v8-depth-copy{position:absolute;inset:-4%;width:108%;height:108%;object-fit:cover;z-index:3;pointer-events:none;clip-path:polygon(0 60%,100% 55%,100% 100%,0 100%);opacity:.30;filter:saturate(1.05) contrast(1.08) blur(.15px);transform:translate3d(calc(var(--v8-x,0)*15px),calc(var(--v8-y,0)*8px),18px) scale(1.085);mix-blend-mode:normal}
+.v8-camera-glass{position:absolute;inset:0;z-index:12;pointer-events:none;background:radial-gradient(ellipse at 50% 45%,transparent 45%,rgba(2,5,5,.08) 72%,rgba(2,5,5,.35) 100%),linear-gradient(180deg,rgba(255,231,181,.025),transparent 32%,rgba(0,0,0,.09));box-shadow:inset 0 0 8vw rgba(0,0,0,.22)}
+.v8-camera-glass::after{content:"";position:absolute;inset:0;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");mix-blend-mode:soft-light}
+.scene.v8-resolving .scene-art{filter:saturate(.9) contrast(1.06) brightness(.92)!important}.scene.v8-resolving::after{box-shadow:inset 0 0 12vw rgba(0,0,0,.38)!important}
+.scene-title{z-index:16!important;left:4%!important;top:4%!important;font-size:clamp(20px,2.3vw,36px)!important;letter-spacing:-.03em!important;max-width:54vw!important;color:#f7efd9!important;text-shadow:0 3px 18px rgba(0,0,0,.76)!important}.scene-kicker{font-size:10px!important;letter-spacing:.16em!important;color:rgba(239,201,122,.82)!important}
+.scene.v7-settled .scene-title{opacity:.08!important;transform:translateY(-8px) scale(.97)!important}
+.case-stamp,.scene-ambience,.scene-paint{opacity:0!important;pointer-events:none!important}
+/* 所有旧“物件UI”退化为透明热区；视觉由3D布景承担。 */
+.event-scene button:not(.outcome-prop):not(.return-tab),.event-scene [role="button"],.event-scene .prop,.event-scene .anomaly,.event-scene .evidence,.event-scene .sound-node{background:transparent!important;border-color:transparent!important;box-shadow:none!important;text-shadow:none!important;color:transparent!important;filter:none!important}
+.event-scene button:not(.outcome-prop):not(.return-tab)::before,.event-scene button:not(.outcome-prop):not(.return-tab)::after,.event-scene [role="button"]::before,.event-scene [role="button"]::after{opacity:0!important}
+.v8-hotspot{cursor:pointer!important;outline:0!important}
+.v8-hotspot-ring{position:absolute;width:9px;height:9px;border-radius:50%;z-index:42;pointer-events:none;background:rgba(241,202,119,.26);box-shadow:0 0 0 1px rgba(241,202,119,.18),0 0 0 7px rgba(241,202,119,.035);opacity:.22;transform:translate(-50%,-50%);transition:.18s ease}
+.v8-hotspot:hover>.v8-hotspot-ring,.v8-hotspot:focus-visible>.v8-hotspot-ring,.v8-hotspot.dragging>.v8-hotspot-ring{opacity:1;background:var(--v8-gold);box-shadow:0 0 0 7px rgba(233,189,103,.10),0 0 22px rgba(233,189,103,.5);transform:translate(-50%,-50%) scale(1.18)}
+.v8-object-label{position:absolute;left:50%;bottom:calc(100% + 7px);translate:-50% 4px;z-index:43;min-width:max-content;max-width:190px;padding:4px 6px;background:rgba(4,8,8,.74);border-bottom:1px solid rgba(233,189,103,.72);color:#f6edd9;font:700 10px/1.35 var(--hand);letter-spacing:.04em;opacity:0;pointer-events:none;transition:.16s ease;backdrop-filter:blur(5px);text-align:center;text-shadow:0 2px 7px #000}
+.v8-hotspot:hover>.v8-object-label,.v8-hotspot:focus-visible>.v8-object-label,.v8-hotspot.dragging>.v8-object-label{opacity:1;translate:-50% 0}
+/* 三种处理方式仅以“现场动作热点”出现：默认只看见三个小光点，不看见三张卡。 */
+.outcomes{position:absolute!important;inset:0!important;z-index:55!important;pointer-events:none!important;background:none!important}
+.outcome-prop{width:34px!important;height:34px!important;min-width:34px!important;max-width:34px!important;padding:0!important;border-radius:50%!important;background:radial-gradient(circle,#efc872 0 17%,rgba(239,200,114,.18) 18% 36%,rgba(7,10,10,.2) 38% 100%)!important;border:1px solid rgba(239,200,114,.32)!important;box-shadow:0 0 0 7px rgba(239,200,114,.055),0 6px 18px rgba(0,0,0,.30)!important;opacity:.58!important;color:transparent!important;text-shadow:none!important;overflow:visible!important;backdrop-filter:none!important;pointer-events:auto!important;transition:.18s ease!important}
+.outcome-prop::before{content:""!important;left:50%!important;top:50%!important;width:5px!important;height:5px!important;translate:-50% -50%!important;background:#fff0bd!important;box-shadow:0 0 13px rgba(255,225,151,.75)!important}
+.outcome-prop::after{display:none!important}.outcome-prop:hover,.outcome-prop:focus-visible{opacity:1!important;transform:translate(-50%,-50%) scale(1.16)!important;background:radial-gradient(circle,#ffe09a 0 20%,rgba(239,200,114,.28) 21% 44%,rgba(7,10,10,.34) 45%)!important;outline:0!important}
+.outcome-prop span{position:absolute!important;left:50%!important;bottom:43px!important;translate:-50% 6px!important;display:block!important;width:max-content!important;max-width:220px!important;padding:5px 7px!important;background:rgba(4,8,8,.78)!important;color:#f6edd9!important;border:0!important;border-bottom:1px solid rgba(233,189,103,.72)!important;box-shadow:0 8px 22px rgba(0,0,0,.18)!important;opacity:0!important;pointer-events:none!important;transition:.16s ease!important;font:800 11px/1.42 var(--hand)!important;text-shadow:0 2px 7px #000!important}
+.outcome-prop:hover span,.outcome-prop:focus-visible span{opacity:1!important;translate:-50% 0!important}
+body.choosing .v8-camera-glass{background:radial-gradient(ellipse at 50% 45%,transparent 38%,rgba(2,5,5,.12) 72%,rgba(2,5,5,.44) 100%)}
+/* 办公室和街景：场景是主体，DOM只是点击区域。 */
+.street-start .storefront,.street-start .neighbor,.street-cloud,.wire-bird{opacity:.01!important;background:transparent!important;box-shadow:none!important}.street-start .shop-sign{opacity:.9!important;position:absolute!important;left:39%!important;top:18%!important;background:none!important;color:#f2d48c!important;text-shadow:0 4px 16px rgba(0,0,0,.72)!important;font-size:clamp(28px,4vw,58px)!important;transform:rotate(-2deg)!important}.street-start .shop-sub{opacity:.62!important;background:none!important;color:#eee1c6!important;text-shadow:0 2px 10px #000!important;top:31%!important;font-size:12px!important}.street-start .shop-door{opacity:.015!important}.street-start .shop-door:hover,.street-start .shop-door:focus-visible{opacity:.12!important;box-shadow:0 0 0 18px rgba(235,191,99,.11)!important}
+.office-room{background:transparent!important}.office-room>*:not(.trigger-label):not(.office-progress):not(.continue-sign):not(.office-deco){opacity:.012!important;background:transparent!important;border:0!important;box-shadow:none!important;color:transparent!important}.office-room .office-trigger{opacity:.12!important;box-shadow:0 0 28px rgba(238,193,95,.52)!important;border-radius:50%!important}.trigger-label{left:4%!important;bottom:5%!important;top:auto!important;background:none!important;border:0!important;padding:0!important;color:rgba(246,237,216,.70)!important;font-size:11px!important;text-shadow:0 2px 9px #000!important;max-width:300px!important}.office-progress{top:4%!important;right:4%!important;background:none!important;border:0!important;opacity:.22!important;color:#eee6d3!important}.continue-sign{background:rgba(4,8,8,.42)!important;border:0!important;border-left:2px solid rgba(233,189,103,.6)!important;box-shadow:none!important;color:#f2e8d4!important;backdrop-filter:blur(5px)!important}
+/* 档案柜与荣誉墙都发生在办公室现场，不再切成独立“网页”。 */
+.archive-scene>.scene-art,.achievement-wall>.scene-art{filter:brightness(.60) saturate(.72) blur(.7px)!important;transform:scale(1.08)!important}.archive-drawer,.wall-space{z-index:20!important}.archive-drawer{background:linear-gradient(180deg,rgba(28,22,16,.88),rgba(17,15,12,.93))!important;border:0!important;box-shadow:0 28px 70px rgba(0,0,0,.42)!important;clip-path:polygon(1% 2%,99% 0,100% 97%,2% 100%)!important}.file-row{background:linear-gradient(160deg,#d8c9a8,#bca77d)!important;color:#30291e!important;border:0!important;box-shadow:0 8px 18px rgba(0,0,0,.26),inset 0 1px rgba(255,255,255,.24)!important}.achievement-wall{background:#171815!important}.wall-space{background:rgba(37,31,23,.54)!important;box-shadow:inset 0 0 80px rgba(0,0,0,.35)!important;backdrop-filter:blur(1px)}
+/* 结果不是“结算卡”，只是现场里的一行办结记录。 */
+.scene-resolution{z-index:70!important;left:4%!important;bottom:5%!important;width:min(600px,68vw)!important;padding:9px 12px 8px 15px!important;background:linear-gradient(90deg,rgba(3,7,7,.78),rgba(3,7,7,.40) 78%,transparent)!important;border:0!important;border-left:2px solid rgba(233,189,103,.70)!important;box-shadow:none!important;clip-path:none!important;backdrop-filter:blur(4px)}
+.scene-resolution .result-mark{font-size:9px!important;letter-spacing:.16em!important}.scene-resolution p{font-size:13px!important}.scene-resolution .return-tab{background:none!important;border:0!important;border-bottom:1px solid rgba(233,189,103,.62)!important;color:#f4ead4!important;padding:3px 1px!important}
+.settings-curtain{background:rgba(3,6,6,.66)!important;backdrop-filter:blur(9px)!important}.settings-paper{margin-left:auto!important;margin-right:3vw!important;width:min(390px,90vw)!important;height:100%!important;max-height:none!important;border-radius:0!important;background:rgba(17,20,18,.93)!important;color:#eee4d0!important;border:0!important;border-left:1px solid rgba(233,189,103,.26)!important;box-shadow:-20px 0 60px rgba(0,0,0,.3)!important}.setting-row{border-bottom:1px solid rgba(255,255,255,.06)!important}.setting-row button{background:none!important;color:#e9bd67!important;border:0!important;border-bottom:1px solid rgba(233,189,103,.35)!important;border-radius:0!important}
+@media(max-width:760px){.scene-art{inset:-2%!important;width:104%!important;height:104%!important;transform:scale(1.04)!important}.v8-depth-copy{display:none}.scene-title{max-width:72vw!important;font-size:clamp(18px,6vw,28px)!important}.outcome-prop{width:30px!important;height:30px!important;min-width:30px!important;max-width:30px!important;opacity:.74!important}.outcome-prop span{opacity:.92!important;bottom:36px!important;font-size:10px!important;max-width:30vw!important}.v8-object-label{font-size:9px;max-width:130px}.trigger-label{font-size:10px!important;max-width:68vw!important}.scene-resolution{left:10px!important;right:10px!important;width:auto!important;bottom:10px!important}.archive-drawer{inset:8% 5%!important}.file-row{width:46%!important}}
+.low-motion .v8-depth-copy{display:none!important}.low-motion .scene-art{transform:scale(1.04)!important;transition:none!important}
+.v6-hover-label{display:none!important}.v6-hotzone::after{display:none!important}.v6-fx{opacity:.55!important}.v6-light-sweep{opacity:.24!important}.v6-dust{opacity:.18!important}
+/* V8 office interaction map: explicit viewport-relative hit zones replace legacy transformed furniture coordinates. */
+.office-room{position:absolute!important;inset:0!important;transform:none!important;overflow:visible!important}
+.office-door,.archive,.boss-chair,.office-printer,.office-phone,.office-computer,.office-mail,.desk-trigger,.office-fridge,.honor-wall-object{position:absolute!important;transform:none!important;margin:0!important;width:auto!important;height:auto!important;min-width:0!important;min-height:0!important;padding:0!important;border-radius:14px!important}
+.office-door{left:78%!important;top:23%!important;width:13%!important;height:42%!important}
+.archive{left:8%!important;top:24%!important;width:14%!important;height:42%!important}
+.boss-chair{left:65%!important;top:53%!important;width:9%!important;height:19%!important}
+.office-printer{left:31%!important;top:43%!important;width:14%!important;height:18%!important}
+.office-phone{left:50%!important;top:54%!important;width:9%!important;height:12%!important}
+.office-computer{left:52%!important;top:34%!important;width:16%!important;height:22%!important}
+.office-mail{left:22%!important;top:63%!important;width:10%!important;height:11%!important}
+.desk-trigger{left:42%!important;top:61%!important;width:17%!important;height:13%!important}
+.office-fridge{left:82%!important;top:52%!important;width:11%!important;height:34%!important}
+.honor-wall-object{left:24%!important;top:12%!important;width:25%!important;height:18%!important}
+.office-room .v8-hotspot-ring{opacity:.12}.office-room .office-trigger .v8-hotspot-ring{opacity:.95!important;background:#f0c56c!important;box-shadow:0 0 0 8px rgba(240,197,108,.08),0 0 24px rgba(240,197,108,.48)!important}
+@media(max-width:760px){.office-door{left:76%!important;top:22%!important;width:18%!important;height:38%!important}.archive{left:5%!important;top:25%!important;width:20%!important;height:36%!important}.boss-chair{left:64%!important;top:55%!important;width:12%!important;height:16%!important}.office-printer{left:26%!important;top:45%!important;width:18%!important;height:15%!important}.office-phone{left:48%!important;top:55%!important;width:13%!important;height:11%!important}.office-computer{left:48%!important;top:35%!important;width:21%!important;height:20%!important}.office-mail{left:18%!important;top:64%!important;width:14%!important;height:10%!important}.desk-trigger{left:39%!important;top:62%!important;width:23%!important;height:12%!important}.office-fridge{left:80%!important;top:53%!important;width:15%!important;height:30%!important}.honor-wall-object{left:20%!important;top:11%!important;width:30%!important;height:18%!important}}
+/* Street entry is a real door-sized hit area, not the 12px legacy seam. */
+.street-start .storefront{position:absolute!important;inset:0!important;transform:none!important;filter:none!important;pointer-events:none!important}.street-start .shop-door{position:absolute!important;left:45%!important;top:35%!important;width:12%!important;height:39%!important;min-width:96px!important;min-height:220px!important;pointer-events:auto!important;border-radius:10px!important}.street-start .shop-sign{left:42%!important;top:19%!important}.street-start .shop-sub{left:38%!important;top:28%!important;width:28%!important}
+@media(max-width:760px){.v8-hotspot{min-width:44px!important;min-height:44px!important}.street-start .shop-door{left:43%!important;top:34%!important;width:20%!important;height:40%!important;min-width:72px!important;min-height:240px!important}.street-start .shop-sign{left:35%!important;top:18%!important}.street-start .shop-sub{display:none!important}}
+
+/* V8.1 — remove the last legacy 'PPT stage' paint layers. Containers remain only as spatial hit-layouts. */
+.ev01 .desk-plane,.ev02 .building-cut,.ev03 .vending,.ev04 .meeting-room,.ev05 .lift,.ev06 .bike-line,.ev07 .locker,.ev08 .stairwell,.ev09 .shop,.ev10 .packing-table,.ev13 .bus-shell,.ev14 .dollhouse,.ev17 .reverse-office,.ev18 .tribunal,.ev19 .day8-street,.ev20 .final-office{
+  background:transparent!important;border-color:transparent!important;box-shadow:none!important;filter:none!important
+}
+.ev01 .desk-plane::before,.ev01 .desk-plane::after,
+.ev02 .building-cut::before,.ev02 .building-cut::after,
+.ev03 .vending::before,.ev03 .vending::after,
+.ev04 .meeting-room::before,.ev04 .meeting-room::after,
+.ev05 .lift::before,.ev05 .lift::after,
+.ev06 .bike-line::before,.ev06 .bike-line::after,
+.ev07 .locker::before,.ev07 .locker::after,
+.ev08 .stairwell::before,.ev08 .stairwell::after,
+.ev09 .shop::before,.ev09 .shop::after,
+.ev10 .packing-table::before,.ev10 .packing-table::after,
+.ev13 .bus-shell::before,.ev13 .bus-shell::after,
+.ev14 .dollhouse::before,.ev14 .dollhouse::after,
+.ev17 .reverse-office::before,.ev17 .reverse-office::after,
+.ev18 .tribunal::before,.ev18 .tribunal::after,
+.ev19 .day8-street::before,.ev19 .day8-street::after,
+.ev20 .final-office::before,.ev20 .final-office::after{opacity:0!important;background:none!important;box-shadow:none!important}
+/* The 3D render already contains the elevator and bus; old CSS scenery must not repaint them. */
+.ev05 .doors,.ev05 .door,.ev05 .half-hall{opacity:0!important;background:none!important;border:0!important;box-shadow:none!important;color:transparent!important}
+.ev05 .lift.open::after{content:""!important;position:absolute!important;left:20%!important;top:18%!important;width:50%!important;height:68%!important;opacity:.52!important;background:linear-gradient(90deg,transparent,rgba(245,215,155,.12),transparent)!important;filter:blur(14px)!important;pointer-events:none!important}
+.ev13 .bus-window,.ev13 .moving-city{opacity:0!important;background:none!important;border:0!important;box-shadow:none!important}
+/* Large purely decorative legacy shapes are not part of the final art direction. */
+.ev01 .report-stack,.ev02 .pipe-run,.ev04 .podium,.ev09 .counter,.ev13 .driver,.ev14 .ghost-sheet,.ev17 .office-shadow{background:transparent!important;box-shadow:none!important;border-color:transparent!important}
+/* Physical panels that remain are restrained to real device scale, never page-sized. */
+.ev05 .display{right:7%!important;top:15%!important;width:8.5%!important;height:6.5%!important;background:rgba(9,21,21,.76)!important;border:1px solid rgba(230,198,105,.26)!important;box-shadow:0 4px 18px rgba(0,0,0,.22)!important;font-size:18px!important}
+.ev05 .panel{right:5.4%!important;top:25%!important;width:10.5%!important;padding:8px!important;gap:6px!important;background:rgba(38,50,48,.66)!important;border:1px solid rgba(220,215,192,.12)!important;box-shadow:0 8px 24px rgba(0,0,0,.22)!important;clip-path:none!important;backdrop-filter:blur(3px)}
+.ev05 .floor-btn{min-width:30px!important;min-height:30px!important;height:30px!important;background:rgba(214,207,186,.88)!important;box-shadow:inset 0 -2px rgba(50,60,56,.25)!important;font-size:10px!important;color:#263432!important}
+.ev13 .route-display{background:rgba(7,18,20,.72)!important;border:1px solid rgba(222,195,116,.20)!important;box-shadow:0 8px 20px rgba(0,0,0,.22)!important;color:#e7c879!important}
+@media(max-width:760px){.ev05 .display{right:4%!important;top:14%!important;width:15%!important;height:5.5%!important}.ev05 .panel{right:3%!important;top:23%!important;width:17%!important;gap:4px!important;padding:5px!important}.ev05 .floor-btn{min-height:28px!important;height:28px!important;font-size:9px!important}}
+/* V8.2 — accessibility without reintroducing UI: 44px hit area, same tiny visible marker. */
+.outcome-prop{width:44px!important;height:44px!important;min-width:44px!important;max-width:44px!important;background:radial-gradient(circle,#efc872 0 11%,rgba(239,200,114,.18) 12% 25%,rgba(7,10,10,.12) 26% 37%,transparent 38%)!important;border-color:transparent!important;box-shadow:none!important}
+.outcome-prop:hover,.outcome-prop:focus-visible{background:radial-gradient(circle,#ffe09a 0 13%,rgba(239,200,114,.27) 14% 29%,rgba(7,10,10,.15) 30% 39%,transparent 40%)!important;box-shadow:none!important}
+@media(max-width:760px){.outcome-prop{width:44px!important;height:44px!important;min-width:44px!important;max-width:44px!important}}
+/* V8.3 — clamp physical outcome hit targets inside narrow viewports after expanding them to 44px. */
+@media(max-width:760px){
+  .outcome-prop{
+    left:clamp(24px,var(--ox,50%),calc(100% - 24px))!important;
+    top:clamp(24px,var(--oy,72%),calc(100% - 24px))!important;
+  }
+}
+/* V8.4 — legacy per-event nth-child rules had higher specificity than the generic clamp.
+   Pin mobile action centers safely inside the viewport while keeping the tiny visual marker. */
+@media(max-width:760px){
+  body[data-event] .outcomes.ready .outcome-prop:nth-child(1){left:30px!important;right:auto!important;bottom:auto!important}
+  body[data-event] .outcomes.ready .outcome-prop:nth-child(2){left:50%!important;right:auto!important;bottom:auto!important}
+  body[data-event] .outcomes.ready .outcome-prop:nth-child(3){left:calc(100% - 30px)!important;right:auto!important;bottom:auto!important}
+}
+/* V8.5 — complete the mobile physical-action anchors with explicit vertical centers. */
+@media(max-width:760px){
+  body[data-event] .outcomes.ready .outcome-prop:nth-child(1){top:72%!important}
+  body[data-event] .outcomes.ready .outcome-prop:nth-child(2){top:82%!important}
+  body[data-event] .outcomes.ready .outcome-prop:nth-child(3){top:72%!important}
+}

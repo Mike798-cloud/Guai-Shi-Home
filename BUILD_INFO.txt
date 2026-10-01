@@ -1,0 +1,26 @@
+怪事屋 V10.3 专业源资产深化 / 物理命中终审版
+版本：10.3.0
+基线：用户当前完整包 a.zip + V10.2 真实合包增量
+
+发布处理：当前完整包及既有增量仍未提供可执行 .bat/.cmd，当前 Linux 环境也无法真实执行 Windows BAT；因此不虚构 BAT 执行记录。本包继续沿用已约定的 source -> release 等价处理，只输出相对 V10.2 基线真正新增/变化、且最终运行需要的 release 文件。
+
+V10.3 主要变化：
+- 新增 22 组场景索引网格源资产（GSWM103），每场 64×36 / 2304 顶点 / 13230 索引；为保证离线运行，22 组网格和材质 profile 经过处理后统一嵌入 assets/mesh_v103/mesh-data.js，由正式运行链直接引用。
+- V10 WebGL 从运行时深度平面改为优先加载索引场景网格，并用每场 roughness / metalness / wetness / exposure / light profile 驱动材质表现；资源缺失时仍可退回原深度网格。
+- 新增 32 条 48kHz / stereo / PCM24 音频资产：16 条 Foley、12 条环境底噪、4 条氛围配乐；正式运行与 legacy fallback 均切换到 V10.3 音频集，不再引用旧 22.05kHz 单声道资源。
+- WebAudio 优先请求 48kHz；one-shot 解码失败时仍通过 MediaElementSource 接入 FX bus / spatial pan，而不是绕开总线直接播放。
+- 物理层新增 AABB 障碍碰撞、反弹、摩擦、角速度、旋转阻尼与碰撞事件；事件11的灯具会与人物遮挡体产生真实屏幕空间碰撞反馈。
+- 修复复查中新发现的真实指针问题：事件03售货机和事件18听证桌曾随光标视差轻微移动，导致连续实体点击时 pointer-down / pointer-up 可能落在不同目标。V10.3 将这两个高频交互容器固定在屏幕空间，保留 WebGL 场景视差，因此真实点击稳定。
+
+终审验证：
+- 实际运行版本：content / audio / physics / renderer 全部 10.3.0；20/20 renderer 可实例化，重复 DOM id = 0。
+- 状态完整回归：completed=1..20、current_event=21、ending=true；事件20错误证物拒绝/正确证物恢复 PASS；page/console error=0。
+- 高风险真实鼠标点击专项：事件03双拍、事件13公交、事件18证据听证全部普通 physical click PASS。
+- 1280×800 可见控件中心命中扫描：除事件10包裹未打开前设计性隐藏控件外无阻挡；390×844 touch + low-motion + large-text 无横向溢出。
+- 22 个 mesh profile + 22 个 GSWM103 网格均能解析；单网格 2304 顶点 / 13230 indices。
+- 新 32 条运行音频均存在且为 48000Hz、2声道、PCM_24；首 ambience / music 均进入 WebAudio bus；示例 Foley 在浏览器解码为 48kHz stereo。
+- 22 scene + 22 depth + 22 normal + 22 ORM 共 88 张运行图均可解码；全部实际 JS syntax PASS，production.css parse 0 error。
+- 沙箱 Chromium 仍无法创建真实 WebGL context，因此只能验证 WebGL 初始化/数据路径和无 WebGL fallback；真实 GPU shader / drawElements 仍需发行设备实机验收，不能虚报。
+
+严格限制：
+V10.3 已把当前工具链可以真实制作的“源资产”从单纯静态图进一步提升为可直接运行的索引场景网格、逐场材质 profile 和 48kHz 立体声音频源；但这些场景网格依然由现有深度资产派生，并非专业 3D 美术逐件重新建模、UV/高低模烘焙与手工 PBR 贴图。角色仍是场景图中的静态角色，没有完整骨骼/IK/表情动作树；物理是可靠的 2D/2.5D 屏幕空间碰撞而非完整 3D 刚体世界；V10.3 音频是重新设计/合成的高规格数字源，不等同录音棚实录 Foley、真人演奏或正式商业母带。因此这些生产维度仍必须按实际质量评分。

@@ -1,0 +1,315 @@
+/* V4.0 互动绘本发行层：用完整场景、材质和现场动作覆盖组件化外观。 */
+:root{
+  --v4-ink:#344745;--v4-ink2:#52645f;--v4-paper:#efe3c4;--v4-paper2:#dac89e;
+  --v4-gold:#d2b45f;--v4-rust:#b86550;--v4-jade:#6f8f84;--v4-shadow:rgba(43,57,55,.18);
+}
+body{background:#d9cdb2}
+body::before{opacity:.09;mix-blend-mode:multiply;background:
+ radial-gradient(circle at 11% 22%,rgba(47,67,63,.22) 0 .45px,transparent .7px),
+ radial-gradient(circle at 67% 41%,rgba(116,86,59,.17) 0 .55px,transparent .8px);background-size:17px 19px,29px 23px}
+.scene::after{box-shadow:inset 0 0 120px rgba(35,48,47,.08)}
+.scene-art{position:absolute!important;inset:0;width:100%;height:100%;object-fit:cover;opacity:1!important;filter:none!important;z-index:0!important;pointer-events:none;transform:scale(1.012) translate(calc(var(--mx,0)*-4px),calc(var(--my,0)*-3px));transition:transform .22s ease-out}
+.event-scene>.scene-paint{z-index:1;opacity:.22;mix-blend-mode:soft-light}
+.event-scene>.scene-ambience{z-index:8}
+.event-scene>.prop,.event-scene>.anomaly,.event-scene>.evidence,.event-scene>button:not(.outcome-prop){z-index:18}
+
+/* 场景名只是拍板信息，不再像页面标题。 */
+.scene-title{z-index:25!important;left:3.2%!important;right:auto!important;top:3.2%!important;max-width:360px!important;margin:0!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important;color:rgba(42,58,56,.8)!important;text-shadow:0 1px rgba(255,255,255,.35);font:800 clamp(15px,1.3vw,19px)/1.3 var(--hand)!important;letter-spacing:.02em;transform:rotate(-1deg)!important;opacity:.82!important;animation:v4Title 7.2s ease forwards!important}
+.scene-kicker{font:800 8px/1.15 var(--sans)!important;letter-spacing:.15em!important;text-transform:uppercase;opacity:.62;margin-bottom:5px!important}
+.case-stamp{z-index:24!important;right:2.4%!important;top:3.4%!important;background:transparent!important;border:2px solid rgba(54,73,69,.42)!important;color:rgba(54,73,69,.62)!important;box-shadow:none!important;padding:6px 8px!important;font-size:9px!important;transform:rotate(3deg)!important;mix-blend-mode:multiply}
+@keyframes v4Title{0%,42%{opacity:.82}100%{opacity:.2}}
+
+/* 字幕改成跟随交互对象的“现场旁白”，不再固定成一张卡。 */
+.subtitle{background:transparent!important;box-shadow:none!important;clip-path:none!important;padding:0!important;color:#314441!important;font:800 clamp(13px,1.25vw,16px)/1.55 var(--hand)!important;max-width:min(500px,70vw)!important;text-shadow:0 1px rgba(255,255,255,.6);transform:none!important}
+.subtitle::before{display:none!important}
+.subtitle:not(:empty)::after{content:"";position:absolute;left:-11px;top:50%;width:5px;height:74%;max-height:52px;transform:translateY(-50%) rotate(-2deg);background:currentColor;opacity:.22;border-radius:999px}
+.subtitle.anchored{position:fixed!important;left:var(--sx)!important;top:var(--sy)!important;bottom:auto!important;right:auto!important;width:min(440px,54vw)!important;transform:translate(-50%,-100%)!important;text-align:left;padding:8px 13px 9px 16px!important;background:rgba(247,239,214,.88)!important;backdrop-filter:blur(3px);border-radius:4px 11px 8px 2px!important;box-shadow:0 8px 24px rgba(41,56,53,.11)!important}
+.subtitle.anchored.below{transform:translate(-50%,0)!important}
+body.choosing .subtitle{opacity:.6!important;top:4%!important;background:transparent!important;box-shadow:none!important;backdrop-filter:none!important;text-align:center;padding:0!important;width:min(520px,60vw)!important}
+
+/* 系统功能缩成环境边缘的书签。 */
+.system-controls{right:-18px!important;top:18px!important;gap:2px!important;opacity:.12!important}
+.system-controls:hover,.system-controls:focus-within{right:4px!important;opacity:.9!important}
+.sys-btn{width:48px!important;height:48px!important}
+.sys-btn span{width:24px!important;height:34px!important;background:#e8dbb8!important;color:#566863!important;box-shadow:2px 3px rgba(44,58,56,.08)!important;clip-path:polygon(0 5%,100% 0,91% 97%,5% 100%)!important;font-size:10px!important}
+
+/* 互动对象：去掉统一粗黑描边，改成柔和材质与阴影。 */
+.event-scene button,.event-scene [role="button"]{outline-color:#e2b64e}
+.event-scene .prop,.event-scene .anomaly,.event-scene .evidence{filter:drop-shadow(0 7px 7px rgba(45,58,56,.12));transition:transform .18s ease,filter .18s ease,opacity .18s ease}
+.event-scene button.prop:hover,.event-scene [role="button"].prop:hover,.event-scene .anomaly:hover,.event-scene .evidence:hover{filter:drop-shadow(0 11px 9px rgba(45,58,56,.18)) brightness(1.03)}
+.event-scene .done{filter:saturate(.84) drop-shadow(0 5px 5px rgba(45,58,56,.08))}
+
+/* 决策不再是统一矩形卡：作为现场“可执行动作”分布在真实物件旁。 */
+.outcomes{z-index:42!important}
+.outcomes.ready{pointer-events:none!important}
+.outcome-prop{min-width:0!important;max-width:none!important;width:auto!important;height:auto!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;clip-path:none!important;border-radius:0!important;color:#314643!important;font:900 12px/1.28 var(--hand)!important;text-align:left!important;filter:none!important;display:flex!important;align-items:center!important;gap:8px!important;transform:none!important;text-shadow:0 1px rgba(255,255,255,.55);pointer-events:auto!important}
+.outcome-prop::before{flex:0 0 auto;display:block!important;width:34px!important;height:34px!important;margin:0!important;border:0!important;background:rgba(236,218,174,.94)!important;box-shadow:0 5px 10px rgba(44,58,56,.14)!important;clip-path:circle(48% at 50% 50%)!important;content:""!important}
+.outcome-prop span{display:inline!important;max-width:168px;padding:5px 3px;border-bottom:2px solid rgba(49,70,67,.28)}
+.outcome-prop:hover{transform:translateY(-2px)!important;filter:none!important}.outcome-prop:hover::before{transform:scale(1.08);background:#f1d985!important}.outcome-prop:focus-visible span{background:rgba(247,231,185,.75)}
+/* 每个事件使用现场媒介/符号，不统一成牌子。 */
+.ev01 .outcome-prop:nth-child(1)::before{clip-path:polygon(5% 14%,95% 5%,86% 92%,12% 100%)!important;background:#f0dfac!important}.ev01 .outcome-prop:nth-child(2)::before{border:4px dashed #72817b!important;background:transparent!important;border-radius:50%;clip-path:none!important}.ev01 .outcome-prop:nth-child(3)::before{clip-path:polygon(18% 0,82% 0,100% 55%,68% 100%,30% 100%,0 55%)!important;background:#c18a75!important}
+.ev02 .outcome-prop:nth-child(1)::before{background:repeating-linear-gradient(90deg,#8fa486 0 4px,#c9d1aa 4px 8px)!important;border-radius:7px;clip-path:none!important}.ev02 .outcome-prop:nth-child(2)::before{background:#e4c662!important;clip-path:circle(48%)!important}.ev02 .outcome-prop:nth-child(3)::before{background:radial-gradient(circle,#779895 0 5px,#d6c89f 6px 14px,#779895 15px)!important}
+.ev03 .outcome-prop:nth-child(1)::before{background:linear-gradient(160deg,#e8dbc2 0 48%,#b86a55 49% 56%,#e8dbc2 57%)!important;clip-path:polygon(0 12%,94% 0,100% 88%,8% 100%)!important}.ev03 .outcome-prop:nth-child(2)::before{background:#e0c35c!important;clip-path:polygon(0 20%,100% 0,92% 82%,10% 100%)!important}.ev03 .outcome-prop:nth-child(3)::before{background:#526a66!important;clip-path:polygon(28% 0,72% 0,100% 42%,78% 100%,22% 100%,0 42%)!important}
+.ev04 .outcome-prop:nth-child(1)::before{border:3px double #6d8179!important;background:transparent!important;clip-path:circle(50%)!important}.ev04 .outcome-prop:nth-child(2)::before{background:#9d754f!important;clip-path:polygon(0 24%,15% 0,84% 0,100% 24%,82% 100%,17% 100%)!important}.ev04 .outcome-prop:nth-child(3)::before{background:#c4a28a!important;clip-path:polygon(48% 0,100% 40%,74% 100%,26% 100%,0 40%)!important}
+.ev05 .outcome-prop::before{background:#7c8a82!important;border:2px solid #435754!important;border-radius:50%!important;clip-path:none!important;box-shadow:inset 0 2px rgba(255,255,255,.18),0 5px 10px rgba(0,0,0,.18)!important}.ev05 .outcome-prop span{color:#e8dfc3;border-color:rgba(232,223,195,.33);text-shadow:0 1px #293f3e}
+.ev06 .outcome-prop::before{background:#6f9188!important;clip-path:circle(48%)!important}.ev07 .outcome-prop::before{background:#d8bd77!important;clip-path:polygon(0 15%,86% 0,100% 50%,88% 100%,0 86%)!important}.ev08 .outcome-prop::before{background:#6a7e78!important;clip-path:polygon(0 0,100% 0,88% 100%,10% 90%)!important}.ev09 .outcome-prop::before{background:#c8915e!important;clip-path:ellipse(48% 34% at 50% 55%)!important}.ev10 .outcome-prop::before{background:#e3d0a3!important;border:2px dashed #8d775e!important;clip-path:polygon(0 5%,100% 0,94% 100%,4% 92%)!important}.ev11 .outcome-prop::before{background:#4c5a57!important;clip-path:polygon(50% 0,100% 100%,0 100%)!important}.ev12 .outcome-prop::before{background:#d6e0c7!important;clip-path:circle(50%)!important}.ev13 .outcome-prop::before{background:#dfc267!important;clip-path:polygon(0 0,100% 0,86% 100%,12% 92%)!important}.ev14 .outcome-prop::before{background:#e7e0cd!important;border:3px solid #758980!important;clip-path:polygon(0 5%,100% 0,95% 100%,4% 94%)!important}.ev15 .outcome-prop::before{background:#e7d36e!important;clip-path:circle(50%)!important}.ev16 .outcome-prop::before{background:#6f8980!important;clip-path:polygon(0 25%,18% 0,100% 0,92% 77%,38% 78%,20% 100%,22% 78%,0 78%)!important}.ev17 .outcome-prop::before{background:#edd7a4!important;border:2px dashed #7a8177!important;clip-path:polygon(0 3%,100% 0,94% 100%,5% 92%)!important}.ev18 .outcome-prop::before{background:#8d755a!important;clip-path:ellipse(45% 50%)!important}.ev19 .outcome-prop::before{background:#e4c75e!important;clip-path:polygon(50% 0,100% 35%,82% 100%,18% 100%,0 35%)!important}.ev20 .outcome-prop::before{background:#b95e4c!important;clip-path:circle(48%)!important;box-shadow:inset 0 0 0 7px #ead8ae,0 5px 10px rgba(44,58,56,.13)!important}
+
+/* 把部分事件中的“纸牌式按钮”进一步去框，保留真正对象。 */
+.ev01 .paper{border:0!important;box-shadow:0 10px 21px rgba(43,56,53,.13)!important;background:linear-gradient(145deg,#f0e5c9,#d9c7a4)!important;color:#435552!important}.ev01 .paper::after{content:"";position:absolute;inset:7px 10px;border-top:1px solid rgba(74,86,81,.16);border-bottom:1px solid rgba(74,86,81,.1);pointer-events:none}.ev01 .printer-big{border:0!important;background:linear-gradient(180deg,#9aa69a,#7f8f86)!important;box-shadow:inset 0 9px rgba(255,255,255,.12),0 16px 24px rgba(39,53,51,.18)!important}
+.ev03 .vending{border:0!important;background:linear-gradient(180deg,#627a74,#465e5b)!important;box-shadow:inset 0 0 0 9px rgba(255,255,255,.05),0 22px 30px rgba(38,53,51,.2)!important}.ev03 .product{border:0!important;box-shadow:inset 0 3px rgba(255,255,255,.16),0 3px 5px rgba(0,0,0,.12)!important}
+.ev05 .doors{border:0!important;box-shadow:inset 0 0 0 3px rgba(255,255,255,.06),0 16px 35px rgba(20,32,32,.2)!important}.ev05 .floor-btn{border:0!important;box-shadow:inset 0 2px rgba(255,255,255,.14),0 3px 7px rgba(19,33,32,.22)!important}
+.ev09 .shop-counter{border:0!important;box-shadow:0 15px 28px rgba(47,55,49,.17)!important}.ev13 .bus{border:0!important;box-shadow:0 15px 32px rgba(25,40,39,.22)!important}
+
+/* 处理完成：不再弹“完成卡”，而像现场留下的一段尾声。 */
+.scene-resolution{position:absolute!important;z-index:70!important;left:auto!important;right:3.2%!important;bottom:3.4%!important;top:auto!important;width:min(430px,38vw)!important;min-height:0!important;padding:18px 20px 17px!important;background:rgba(238,225,191,.9)!important;border:0!important;border-left:4px solid rgba(62,81,76,.36)!important;box-shadow:0 12px 32px rgba(37,52,49,.13)!important;clip-path:none!important;transform:rotate(.2deg)!important;backdrop-filter:blur(5px)}
+.scene-resolution .result-mark{font:900 9px/1 var(--sans)!important;letter-spacing:.18em!important;color:#a65949!important;margin-bottom:8px!important}.scene-resolution p{margin:0 0 9px!important;font:800 14px/1.65 var(--hand)!important}.scene-resolution small{display:block!important;font:700 10px/1.45 var(--hand)!important;opacity:.68}.scene-resolution .return-tab{margin-top:10px!important;border:0!important;background:transparent!important;border-bottom:2px solid currentColor!important;padding:5px 2px!important;font:900 12px/1 var(--hand)!important;box-shadow:none!important;clip-path:none!important}
+.resolved .scene-art{opacity:1!important;filter:saturate(.8) brightness(.96)!important}.resolved>:not(.scene-resolution):not(.scene-art){filter:saturate(.74);opacity:.76}
+
+/* 办公室：SVG 是主体，DOM只作为真实物件热区/微表演。 */
+.office-room{background:transparent!important}.office .scene-art{z-index:0!important}.office-room::before,.office-room::after,.ceiling-lamp,.coat-hook,.pinboard,.boss-desk,.player-desk,.floor-paper{opacity:.12!important;pointer-events:none}.office-window,.office-door,.archive,.office-printer,.office-phone,.office-computer,.office-mail,.office-fridge,.honor-wall-object,.boss-chair,.desk-trigger{background:transparent!important;border:0!important;box-shadow:none!important;filter:none!important;outline-offset:5px}.office-door::before,.archive::before,.office-fridge::before,.honor-wall-object::before{opacity:0!important}.office-trigger::after{content:"";position:absolute;inset:18%;border-radius:50%;box-shadow:0 0 0 0 rgba(231,196,88,.55);animation:v4Pulse 1.8s ease-out infinite}.desk-trigger.office-trigger::after{inset:-10px;border-radius:8px}.office-trigger:hover::after{box-shadow:0 0 0 14px rgba(231,196,88,.14)}
+@keyframes v4Pulse{0%{box-shadow:0 0 0 0 rgba(231,196,88,.45)}75%,100%{box-shadow:0 0 0 20px rgba(231,196,88,0)}}
+.office-note{background:transparent!important;box-shadow:none!important;opacity:.45!important;font-size:13px!important}.trigger-label{background:transparent!important;box-shadow:none!important;padding:0!important;color:#425753!important;text-shadow:0 1px rgba(255,255,255,.6);font-size:11px!important;max-width:260px!important}.office-progress{opacity:.28!important;background:transparent!important;box-shadow:none!important}.continue-sign{background:rgba(238,224,190,.74)!important;box-shadow:0 9px 24px rgba(39,53,50,.1)!important}
+
+/* 荣誉墙：奖项变成不同实体，而非一排小卡。 */
+.achievement-wall{background:linear-gradient(165deg,#cbb992,#ad8d68)!important}.wall-space{background-image:radial-gradient(circle at 22% 30%,rgba(255,255,255,.13),transparent 28%),linear-gradient(90deg,rgba(74,61,48,.06) 1px,transparent 1px);background-size:auto,84px 100%!important}.award{background:transparent!important;box-shadow:none!important;clip-path:none!important;width:150px!important;padding:46px 8px 8px!important;text-align:center!important;color:#344744!important}.award::before{content:"";position:absolute;left:50%;top:3px;transform:translateX(-50%);width:68px;height:68px;background:#d6b95e;border-radius:50%;box-shadow:inset 0 0 0 8px rgba(255,255,255,.18),0 8px 15px rgba(45,57,53,.17)}.award.type-冷幽默::before{border-radius:8px 18px 8px 18px;background:#c97a5f;transform:translateX(-50%) rotate(6deg)}.award.type-隐藏::before{clip-path:polygon(50% 0,61% 34%,98% 34%,68% 55%,79% 92%,50% 70%,21% 92%,32% 55%,2% 34%,39% 34%);border-radius:0;background:#6d9187}.award b{font:900 13px/1.2 var(--hand)!important}.award small{font:700 9px/1.3 var(--hand)!important;opacity:.67}.award:not(.unlocked){opacity:.3!important}.wall-back{background:transparent!important;border:0!important;border-bottom:2px solid #3f5552!important;box-shadow:none!important}
+
+/* 档案柜：改成真正叠放的文件夹和标签，不是整齐列表卡。 */
+.archive-scene{background:linear-gradient(150deg,#7f6e59,#9a8268)!important;padding:4vh 5vw 7vh!important}.archive-drawer{max-width:1120px!important;min-height:88vh!important;padding:70px 70px 80px!important;background:linear-gradient(160deg,#7c6955,#5f5448)!important;box-shadow:inset 0 0 0 9px rgba(50,55,50,.16),18px 22px rgba(33,45,43,.15)!important;clip-path:polygon(0 2%,98% 0,100% 98%,2% 100%)!important}.archive-drawer h2{font-size:clamp(26px,3vw,42px)!important;margin-bottom:42px!important;opacity:.9}.file-row{width:min(720px,88%)!important;margin:-5px 0 0 calc((var(--fi,0))*13px)!important;padding:19px 30px 18px 90px!important;background:#d7bc82!important;box-shadow:0 8px 13px rgba(35,44,41,.18)!important;clip-path:polygon(0 15%,12% 15%,16% 0,47% 0,51% 13%,100% 13%,98% 100%,2% 97%)!important;border:0!important;transform:rotate(var(--fr,-.3deg))!important;min-height:70px!important}.file-row:nth-of-type(4n+1){background:#c9b381!important}.file-row:nth-of-type(4n+2){background:#ddc98f!important}.file-row:nth-of-type(4n+3){background:#baa985!important}.file-row::before{display:none!important}.file-row strong{font-size:14px!important}.file-row span{font-size:10px!important}.file-row:hover{transform:translateX(18px) rotate(0)!important}.empty-file{opacity:.22!important;filter:saturate(.3)}
+
+/* 设置仍是一张真实值班纸，但减少“表单卡片”感。 */
+.settings-curtain{background:rgba(38,52,50,.42)!important}.settings-paper{background:#ead8ae!important;box-shadow:17px 23px rgba(35,50,47,.16)!important;clip-path:polygon(2% 0,98% 2%,100% 92%,93% 100%,0 96%)!important}.setting-row{border-bottom:1px dashed rgba(50,68,64,.23)!important}.setting-row button{background:transparent!important;box-shadow:none!important}
+
+/* 桌面与移动端：窄屏重新构图，不堆成卡片列。 */
+@media(max-width:760px){
+ .scene-art{object-position:center center;transform:scale(1.04)}
+ .scene-title{left:12px!important;top:11px!important;max-width:58vw!important;font-size:14px!important}.case-stamp{right:10px!important;top:10px!important;font-size:7px!important}
+ .subtitle{font-size:12px!important;max-width:78vw!important}.subtitle.anchored{left:12px!important;right:12px!important;top:auto!important;bottom:12px!important;width:auto!important;max-width:none!important;transform:none!important;background:rgba(244,234,207,.92)!important}.subtitle.anchored.below{transform:none!important}
+ body.choosing .subtitle{display:none!important}
+ .outcome-prop{font-size:10px!important}.outcome-prop span{max-width:105px!important}.outcome-prop::before{width:30px!important;height:30px!important}
+ .scene-resolution{right:12px!important;left:12px!important;bottom:12px!important;width:auto!important;padding:14px 15px!important}.scene-resolution p{font-size:12px!important}
+ .archive-scene{padding:3vh 2vw 6vh!important}.archive-drawer{padding:55px 15px 65px!important}.file-row{width:96%!important;margin-left:0!important;padding:16px 18px 15px 72px!important;min-height:64px!important}
+ .award{width:122px!important}.wall-space{min-height:1500px!important}
+ .system-controls{right:-20px!important;opacity:.08!important}
+ .office-room::before,.office-room::after,.ceiling-lamp,.coat-hook,.pinboard,.boss-desk,.player-desk,.floor-paper{display:none!important}
+}
+@media(prefers-reduced-motion:reduce){.scene-art{transform:none!important}.office-trigger::after{animation:none!important}.scene-title{animation:none!important;opacity:.45!important}}
+
+/* ---------- V4.1 第二轮：让“完整插画”成为主体，DOM 退回互动热区 ---------- */
+/* 统一热点：默认无底板，靠光晕与鼠标反馈提示，而不是再画一张按钮卡。 */
+.event-scene .sound-node,.event-scene .anomaly,.event-scene .evidence,.event-scene .witness{border:0!important;box-shadow:none!important;background:transparent!important}
+.event-scene .sound-node::after,.event-scene .anomaly::after,.event-scene .evidence::after,.event-scene .witness::after{content:"";position:absolute;inset:18%;border-radius:50%;box-shadow:0 0 0 0 rgba(229,193,83,.4);transition:.18s}
+.event-scene .sound-node:hover::after,.event-scene .anomaly:hover::after,.event-scene .evidence:hover::after,.event-scene .witness:hover::after,.event-scene .sound-node:focus-visible::after,.event-scene .anomaly:focus-visible::after,.event-scene .evidence:focus-visible::after,.event-scene .witness:focus-visible::after{box-shadow:0 0 0 12px rgba(229,193,83,.14)}
+
+/* 02：楼体来自插画，声音节点只是耳朵的落点。 */
+.ev02 .building-cut{background:transparent!important;border:0!important;box-shadow:none!important}
+.ev02 .roof,.ev02 .floor,.ev02 .timeline{opacity:0!important;pointer-events:none!important}
+.ev02 .sound-node{width:62px!important;height:62px!important;opacity:.78!important}.ev02 .sound-node i{opacity:.5!important}
+.ev02 .marble{filter:drop-shadow(0 4px 5px rgba(43,58,54,.2));background:radial-gradient(circle at 35% 28%,#fff6d1 0 12%,#d9bd64 25%,#758d86 76%)!important;border:0!important}
+
+/* 03：不再用DOM重画一台矩形售货机。 */
+.ev03 .vending{background:transparent!important;border:0!important;box-shadow:none!important}
+.ev03 .shelf,.ev03 .bottle{opacity:0!important;pointer-events:none!important}
+.ev03 .screen{background:#304946!important;color:#f0ce61!important;border:0!important;box-shadow:inset 0 0 10px rgba(0,0,0,.28)!important}
+.ev03 .scan,.ev03 .receipt{background:rgba(239,224,184,.8)!important;border:0!important;box-shadow:0 7px 18px rgba(43,57,53,.12)!important;clip-path:polygon(2% 4%,100% 0,94% 96%,0 92%)!important}.ev03 .slot{background:transparent!important;border:0!important;box-shadow:none!important}
+
+/* 04：会议室桌椅、居民、猫由插画承载，交互只保留话筒/议题的可触点。 */
+.ev04 .meeting-room{background:transparent!important;border:0!important;box-shadow:none!important}
+.ev04 .resident,.ev04 .table{opacity:0!important;pointer-events:none!important}
+.ev04 .cat{background:transparent!important;border:0!important;box-shadow:none!important;opacity:.01!important}
+.ev04 .cat:hover,.ev04 .cat:focus-visible{opacity:.12!important;box-shadow:0 0 0 18px rgba(226,192,82,.13)!important;border-radius:50%!important}
+.ev04 .agenda,.ev04 .signsheet{background:rgba(236,220,180,.72)!important;border:0!important;box-shadow:0 7px 18px rgba(44,58,55,.11)!important}.ev04 .mic{background:#4d625e!important;border:0!important;box-shadow:0 7px 12px rgba(34,48,45,.2)!important;border-radius:999px!important}
+
+/* 06：道路/车体来自场景插画。 */
+.ev06 .hill{opacity:0!important}.ev06 .bike-line{background:transparent!important}
+.ev06 .bike{background:transparent!important;border:0!important;box-shadow:none!important;opacity:.04!important}
+.ev06 .bike:hover,.ev06 .bike:focus-visible{opacity:.18!important;filter:drop-shadow(0 0 10px rgba(226,190,76,.8))!important}
+.ev06 .bike i{opacity:0!important}.ev06 .toolbox,.ev06 .slope-sign{background:rgba(235,219,178,.76)!important;border:0!important;box-shadow:0 7px 18px rgba(44,58,55,.1)!important}
+
+/* 07：柜体来自插画，时间节点像贴在抽屉上的分类标签。 */
+.ev07 .lost-hall,.ev07 .shelf-wall{background:transparent!important;border:0!important;box-shadow:none!important}
+.ev07 .lost-item{background:rgba(224,199,137,.72)!important;border:0!important;box-shadow:0 7px 16px rgba(43,56,53,.11)!important;clip-path:polygon(0 8%,86% 0,100% 50%,86% 100%,0 92%)!important}
+
+/* 08：整条楼道来自插画；门牌保持真正金属门牌的质感。 */
+.ev08 .hallway,.ev08 .building{background:transparent!important;border:0!important;box-shadow:none!important}
+.ev08 [data-plate]{background:linear-gradient(180deg,#d6c36f,#b49f55)!important;border:0!important;box-shadow:inset 0 2px rgba(255,255,255,.2),0 4px 8px rgba(49,61,57,.16)!important;color:#465a56!important;border-radius:3px!important}
+
+/* 09：店面与老人由插画承载，只留下锅、菜单、碗的真实操作。 */
+.ev09 .shop-counter,.ev09 .oldman{background:transparent!important;border:0!important;box-shadow:none!important}
+.ev09 .oldman{opacity:.01!important}.ev09 .oldman:hover,.ev09 .oldman:focus-visible{opacity:.08!important;box-shadow:0 0 0 18px rgba(226,190,81,.13)!important;border-radius:50%!important}
+.ev09 .pot{background:radial-gradient(ellipse at 50% 20%,#91a19a 0 15%,#60756f 18% 70%,#3f5551 100%)!important;border:0!important;box-shadow:0 12px 17px rgba(43,55,52,.18)!important}.ev09 .bowl{background:radial-gradient(ellipse at 50% 12%,#f2ead2 0 25%,#d5cab0 28% 100%)!important;border:0!important}.ev09 .menu{background:rgba(238,222,180,.8)!important;border:0!important;box-shadow:0 8px 16px rgba(43,56,53,.1)!important}
+
+/* 10：箱子依旧需要真实点击，但不再像一张棕色大卡。 */
+.ev10 .parcel-room{background:transparent!important;border:0!important;box-shadow:none!important}.ev10 #box{background:linear-gradient(145deg,rgba(193,151,103,.86),rgba(158,116,82,.92))!important;border:0!important;box-shadow:inset 0 8px rgba(255,255,255,.08),0 18px 30px rgba(47,56,51,.18)!important}
+
+/* 11：舞台、人物由插画承载，灯和速度条仍可操作。 */
+.ev11 .shadow-stage,.ev11 .person,.ev11 .retiree,.ev11 .shadow{background:transparent!important;border:0!important;box-shadow:none!important}.ev11 .person,.ev11 .retiree,.ev11 .shadow{opacity:.01!important}.ev11 .lamp{background:radial-gradient(circle,#f1d66d 0 24%,#6d7f79 26% 54%,transparent 56%)!important;border:0!important;box-shadow:none!important}
+
+/* 12：街景/人物/云来自插画；交互器具作为现场物件。 */
+.ev12 .weather-street,.ev12 .client,.ev12 .cloud{background:transparent!important;border:0!important;box-shadow:none!important}.ev12 .client,.ev12 .cloud{opacity:.01!important}.ev12 .radio,.ev12 .fan,.ev12 .flower{border:0!important;box-shadow:0 8px 17px rgba(43,56,53,.12)!important}
+
+/* 13：车厢来自插画，DOM 不再重画一整块平面公交。 */
+.ev13 .bus{background:transparent!important;border:0!important;box-shadow:none!important}.ev13 .window-row,.ev13 .seats,.ev13 .driver{opacity:0!important;pointer-events:none!important}.ev13 .bell,.ev13 .route{background:rgba(229,204,111,.86)!important;border:0!important;box-shadow:0 6px 15px rgba(40,52,49,.16)!important}
+
+/* 14：房间/鬼由插画承载，检查点是物件本身。 */
+.ev14 .motel-room{background:transparent!important;border:0!important;box-shadow:none!important}.ev14 .ghost{opacity:0!important;pointer-events:none!important}.ev14 [data-step]{border:0!important;box-shadow:0 8px 16px rgba(43,56,53,.11)!important}
+
+/* 15：屋顶和月亮来自插画，月亮DOM只做拖拽热区。 */
+.ev15 .roof-scene{background:transparent!important;border:0!important;box-shadow:none!important}.ev15 .moon{background:transparent!important;border:0!important;box-shadow:none!important;opacity:.02!important}.ev15 .moon:hover{opacity:.12!important;filter:drop-shadow(0 0 18px rgba(235,211,102,.8))!important}.ev15 .photo-stack,.ev15 .block,.ev15 [data-step="move"]{background:rgba(229,216,180,.7)!important;border:0!important;box-shadow:0 8px 17px rgba(19,34,35,.18)!important}
+
+/* 16：电脑来自插画，只让消息在屏幕区域发生，不再套“聊天卡片页面”。 */
+.ev16 .monitor{background:transparent!important;border:0!important;box-shadow:none!important}.ev16 .chat-space{background:transparent!important;border:0!important;box-shadow:none!important}.ev16 .message{border:0!important;box-shadow:none!important;max-width:65%!important;background:rgba(229,215,175,.46)!important;padding:6px 9px!important}.ev16 .rules,.ev16 .fee-slip,.ev16 .meetup-note{background:rgba(235,219,179,.72)!important;border:0!important;box-shadow:0 8px 16px rgba(43,56,53,.1)!important}
+
+/* 17：办公室图来自插画，异常点用热区，不出现大白面板。 */
+.ev17 .reverse-office{background:transparent!important;border:0!important;box-shadow:none!important}.ev17 .anomaly{opacity:.06!important}.ev17 .anomaly:hover,.ev17 .anomaly:focus-visible{opacity:.2!important}.ev17 .form-sheet{background:rgba(236,221,181,.68)!important;border:0!important;box-shadow:0 8px 18px rgba(42,56,53,.1)!important}
+
+/* 18：听证场景与三位老板由插画承载。 */
+.ev18 .tribunal{background:transparent!important;border:0!important;box-shadow:none!important}.ev18 .boss{opacity:.01!important;background:transparent!important;border:0!important;box-shadow:none!important}.ev18 .boss:hover,.ev18 .boss:focus-visible{opacity:.12!important}.ev18 .evidence-table{background:transparent!important;border:0!important;box-shadow:none!important}
+
+/* 19：街道由插画承载，店铺DOM完全退场。 */
+.ev19 .day8-street{background:transparent!important;border:0!important;box-shadow:none!important}.ev19 .building{opacity:0!important;pointer-events:none!important}.ev19 .day-sign{background:rgba(229,198,84,.82)!important;border:0!important;box-shadow:0 8px 17px rgba(43,56,53,.13)!important}.ev19 .switch{background:rgba(238,223,184,.74)!important;border:0!important;box-shadow:0 8px 17px rgba(43,56,53,.12)!important}
+
+/* 20：长表来自背景插画，勾选项成为写在纸上的透明行。 */
+.ev20 .final-office{background:transparent!important;border:0!important;box-shadow:none!important}.ev20 .long-form{background:transparent!important;border:0!important;box-shadow:none!important}.ev20 .long-form h3{background:transparent!important}.ev20 .checkitem{background:transparent!important;border:0!important;box-shadow:none!important;border-bottom:1px dashed rgba(55,73,68,.18)!important;color:#40534f!important;text-align:left!important}.ev20 .checkitem:hover{background:rgba(238,222,181,.3)!important}.ev20 .witness{opacity:.22!important}.ev20 .witness:hover,.ev20 .witness:focus-visible{opacity:.9!important}.ev20 .turn-form{background:rgba(236,218,175,.72)!important;border:0!important;box-shadow:0 8px 17px rgba(42,56,53,.11)!important}
+
+/* ---------- V4.2 第三轮：校正实际DOM类名，清除旧版平面舞台残影 ---------- */
+/* 07 失物仓：真实结构是 locker/cub/timeline。柜体完全交给插画，格子只做轻热点。 */
+.ev07 .locker{background:transparent!important;border:0!important;box-shadow:none!important}
+.ev07 .cub{background:transparent!important;border:0!important;box-shadow:none!important;color:transparent!important;opacity:.03!important}
+.ev07 .cub i,.ev07 .cub small{opacity:0!important}
+.ev07 .cub:hover,.ev07 .cub:focus-visible{opacity:.14!important;box-shadow:inset 0 0 0 3px rgba(225,191,79,.36)!important}
+.ev07 .tuesday{background:rgba(223,196,112,.86)!important;border:0!important;box-shadow:0 9px 19px rgba(45,58,55,.15)!important;clip-path:polygon(3% 8%,93% 0,100% 86%,9% 100%)!important}
+.ev07 .timeline{background:transparent!important;border:0!important;box-shadow:none!important}
+.ev07 .timeline button{background:rgba(238,224,185,.72)!important;border:0!important;box-shadow:0 5px 11px rgba(45,58,55,.08)!important;clip-path:polygon(0 8%,100% 0,95% 100%,6% 91%)!important}
+
+/* 08 楼道：真实结构是 stairwell/landing/door。楼体与门由插画承担，仅门牌可拖。 */
+.ev08 .stairwell,.ev08 .landing,.ev08 .door{background:transparent!important;border:0!important;box-shadow:none!important}
+.ev08 .door::before,.ev08 .door::after,.ev08 .landing::before,.ev08 .landing::after{opacity:0!important}
+.ev08 .cat-helper{background:transparent!important;border:0!important;box-shadow:none!important}
+.ev08 .cat-helper i{opacity:0!important}
+
+/* 09 早餐店：真实结构是 shop/counter。去掉旧柜台与蒸汽字符，让插画承担店面。 */
+.ev09 .shop,.ev09 .counter{background:transparent!important;border:0!important;box-shadow:none!important}
+.ev09 .counter{opacity:0!important;pointer-events:none!important}
+.ev09 .steam{opacity:.18!important;color:#f4ead1!important;text-shadow:0 4px 10px rgba(55,68,63,.12)!important}
+.ev09 .oldman{background:transparent!important;border:0!important;box-shadow:none!important;color:transparent!important}
+
+/* 10 快递桌：真实结构是 packing-table。桌面来自插画，箱子保留真正体积。 */
+.ev10 .packing-table{background:transparent!important;border:0!important;box-shadow:none!important}
+.ev10 .packing-table::before,.ev10 .packing-table::after{opacity:0!important}
+.ev10 .labels{background:rgba(238,223,184,.72)!important;border:0!important;box-shadow:0 7px 15px rgba(44,57,53,.1)!important;clip-path:polygon(2% 4%,97% 0,100% 94%,6% 100%)!important}
+.ev10 .marker{background:linear-gradient(90deg,#3d514d 0 72%,#c55f50 72%)!important;border:0!important;border-radius:999px!important;box-shadow:0 5px 10px rgba(43,55,52,.16)!important;color:transparent!important}
+
+/* 11 影子：真实结构是 stage。人物/影子都在插画里，DOM只保留逻辑热区与灯/滑杆。 */
+.ev11 .stage{background:transparent!important;border:0!important;box-shadow:none!important}
+.ev11 .stage>.person,.ev11 .stage>.retiree,.ev11 .stage>.shadow{background:transparent!important;border:0!important;box-shadow:none!important;opacity:.01!important}
+.ev11 .speed{accent-color:#d4b45f!important;background:rgba(238,224,186,.45)!important;box-shadow:none!important}
+
+/* 12 单人雨：真实结构是 streetline/client/cloud/rain。删除旧简笔街景，云仍作为拖拽热区。 */
+.ev12 .streetline{background:transparent!important;border:0!important;box-shadow:none!important;opacity:0!important;pointer-events:none!important}
+.ev12 .client{background:transparent!important;border:0!important;box-shadow:none!important;opacity:.01!important}
+.ev12 .cloud{background:transparent!important;border:0!important;box-shadow:none!important;opacity:.025!important;filter:none!important}
+.ev12 .cloud:hover,.ev12 .cloud:focus-visible{opacity:.12!important;filter:drop-shadow(0 0 17px rgba(225,193,86,.65))!important}
+.ev12 .rain{opacity:.12!important;mix-blend-mode:multiply!important}
+
+/* 13 公交：真实结构 bus-shell/bus-window/moving-city/route-display。彻底移除旧大色块。 */
+.ev13 .bus-shell{background:transparent!important;border:0!important;box-shadow:none!important}
+.ev13 .bus-window{background:transparent!important;border:0!important;box-shadow:none!important;overflow:visible!important}
+.ev13 .moving-city{opacity:0!important;pointer-events:none!important;background:none!important}
+.ev13 .driver{opacity:.01!important;background:transparent!important;border:0!important;box-shadow:none!important;color:transparent!important}
+.ev13 .route-display{background:rgba(40,59,56,.86)!important;color:#f1ce61!important;border:0!important;box-shadow:inset 0 0 8px rgba(0,0,0,.24),0 5px 12px rgba(32,45,43,.16)!important;letter-spacing:.08em!important}
+.ev13 .bell{background:radial-gradient(circle at 40% 32%,#f3da72 0 25%,#bd913c 28% 80%)!important;border:0!important;border-radius:50%!important;box-shadow:0 5px 11px rgba(38,51,48,.18)!important;color:#435652!important}
+.ev13 .routepaper{background:rgba(235,219,178,.76)!important;border:0!important;box-shadow:0 7px 16px rgba(38,51,48,.11)!important;clip-path:polygon(2% 4%,100% 0,94% 96%,0 91%)!important}
+
+/* 14 民宿：真实结构 dollhouse/room/checklist。房间和鬼来自插画，三个检查点变成透明物件热点。 */
+.ev14 .dollhouse{background:transparent!important;border:0!important;box-shadow:none!important}
+.ev14 .dollhouse::before,.ev14 .dollhouse::after{opacity:0!important}
+.ev14 .ghost{opacity:0!important;pointer-events:none!important;background:transparent!important;border:0!important;box-shadow:none!important}
+.ev14 .room{background:transparent!important;border:0!important;box-shadow:none!important;color:transparent!important;text-shadow:none!important;opacity:.035!important}
+.ev14 .room small{opacity:0!important}
+.ev14 .room:hover,.ev14 .room:focus-visible{opacity:.14!important;box-shadow:inset 0 0 0 3px rgba(226,192,82,.28)!important}
+.ev14 .checklist{background:rgba(239,226,191,.74)!important;border:0!important;box-shadow:0 8px 18px rgba(43,56,53,.11)!important;clip-path:polygon(3% 0,100% 5%,94% 100%,0 93%)!important}
+
+/* 15 屋顶：真实结构 skyline。移除旧剪影，场景画负责城市与月亮。 */
+.ev15 .skyline{opacity:0!important;pointer-events:none!important;background:none!important}
+.ev15 .return-cloud{opacity:.3!important;filter:blur(.2px)!important}
+.ev15 .water-tank,.ev15 .photo-stack{background:rgba(233,218,181,.72)!important;border:0!important;box-shadow:0 8px 18px rgba(19,34,35,.17)!important}
+.ev15 .block{background:transparent!important;border:0!important;box-shadow:none!important;opacity:.04!important;color:transparent!important}
+.ev15 .block:hover,.ev15 .block:focus-visible{opacity:.15!important;box-shadow:0 0 0 18px rgba(229,196,84,.1)!important}
+
+/* 16 群聊：纸条保持信息但去“聊天气泡卡片感”，更像显示器里的便签/终端行。 */
+.ev16 .message{background:transparent!important;border-bottom:1px solid rgba(231,218,178,.18)!important;padding:4px 2px!important;border-radius:0!important;color:#e8dfc3!important;text-shadow:0 1px rgba(0,0,0,.24)!important}
+.ev16 .message:nth-child(even){margin-left:12%!important}.ev16 .message:nth-child(odd){margin-left:0!important}
+.ev16 .rules,.ev16 .fee-slip,.ev16 .meetup-note{clip-path:polygon(2% 5%,96% 0,100% 91%,5% 100%)!important}
+
+/* 17-20：进一步降低白纸/表格感，信息像贴在真实空间中的文件。 */
+.ev17 .form-sheet,.ev20 .turn-form{clip-path:polygon(2% 4%,97% 0,100% 95%,5% 100%)!important;background:rgba(235,219,178,.66)!important}
+.ev18 .evidence{background:transparent!important;border:0!important;box-shadow:none!important;color:transparent!important;opacity:.06!important}.ev18 .evidence:hover,.ev18 .evidence:focus-visible{opacity:.2!important}
+.ev20 .checkitem{font-family:var(--hand)!important;font-weight:800!important}
+
+/* ---------- V4.3 第四轮：据点、入口与功能页也必须是“世界”，不是组件 ---------- */
+/* 街景：完整街道只由SVG绘制，HTML建筑全部退化为门的热区。 */
+.street-start{background:#b8d1c7!important}
+.street-start::before,.street-cloud,.wire-bird,.neighbor,.storefront::before,.awning,.shop-sign,.shop-sub{opacity:0!important;pointer-events:none!important}
+.storefront{background:transparent!important;box-shadow:none!important;filter:none!important;transform:none!important}
+.shop-door{background:transparent!important;border:0!important;box-shadow:none!important;outline-offset:8px!important}
+.shop-door::before,.shop-door::after,.door-knob{opacity:0!important}
+.shop-door:hover,.shop-door:focus-visible{box-shadow:0 0 0 18px rgba(225,190,76,.13)!important;border-radius:22px!important}
+
+/* 办公室：SVG是一张完整插画，DOM只负责热区与后续状态，不再在其上重画简笔家具。 */
+.office-room{background:transparent!important;transform:none!important}
+.office-room::before,.office-room::after,.ceiling-lamp,.office-window,.coat-hook,.pinboard,.office-note,.boss-desk,.player-desk,.floor-paper,.trigger-label,.office-progress{opacity:0!important;pointer-events:none!important}
+.office-window::before,.office-window::after,.moon-peek,.archive::before,.archive::after,.office-door::before,.office-door::after,.office-printer::before,.office-printer::after,.office-phone::before,.office-phone::after,.office-computer::before,.office-computer::after,.office-mail::before,.office-mail::after,.office-fridge::before,.office-fridge::after,.honor-wall-object::before,.honor-wall-object::after,.boss-chair::before,.boss-chair::after{opacity:0!important}
+.office-door,.archive,.office-printer,.office-phone,.office-computer,.office-mail,.office-fridge,.honor-wall-object,.boss-chair,.desk-trigger{background:transparent!important;border:0!important;box-shadow:none!important;filter:none!important;color:transparent!important;text-shadow:none!important;clip-path:none!important}
+.office-deco{opacity:.58!important;filter:drop-shadow(0 3px 4px rgba(45,57,53,.12));font-size:9px!important;background:rgba(236,220,180,.54)!important;border:0!important}
+.office-trigger{animation:none!important}
+.office-trigger::after{inset:22%!important;border-radius:50%!important;background:radial-gradient(circle,rgba(240,207,101,.28),rgba(240,207,101,0) 70%)!important;box-shadow:0 0 0 0 rgba(231,196,88,.48)!important;animation:v4Pulse 1.8s ease-out infinite!important}
+.office-trigger:hover::after,.office-trigger:focus-visible::after{box-shadow:0 0 0 18px rgba(231,196,88,.14)!important}
+.desk-trigger{min-width:140px!important;min-height:70px!important}
+.continue-sign{background:transparent!important;border:0!important;box-shadow:none!important;font:800 13px/1.5 var(--hand)!important;color:#405451!important;text-shadow:0 1px rgba(255,255,255,.5)!important}
+
+/* 荣誉墙：奖项表现成挂件/徽章；说明只在靠近时从挂件下方出现。 */
+.achievement-wall{background:linear-gradient(165deg,#c8b38a,#a98764)!important;overflow:auto!important}
+.wall-space{border:0!important;box-shadow:inset 0 0 0 18px rgba(89,61,42,.34),inset 0 0 0 24px rgba(227,202,151,.22)!important;background:
+ radial-gradient(circle at 17% 22%,rgba(255,255,255,.12),transparent 22%),
+ linear-gradient(90deg,rgba(81,63,47,.06) 1px,transparent 1px),#c9b690!important;background-size:auto,96px 100%,auto!important}
+.award{width:96px!important;min-height:94px!important;padding:0!important;background:transparent!important;box-shadow:none!important;clip-path:none!important;text-align:center!important;color:#354945!important;overflow:visible!important}
+.award::before{width:72px!important;height:72px!important;top:0!important;box-shadow:inset 0 0 0 7px rgba(255,255,255,.17),0 8px 13px rgba(44,57,53,.16)!important}
+.award::after{content:"";position:absolute;left:33px;top:-23px;width:28px;height:31px;border:2px solid rgba(72,69,55,.45);border-bottom:0;border-radius:18px 18px 0 0;z-index:-1}
+.award b,.award small{position:absolute;left:50%;width:170px;transform:translateX(-50%);opacity:0;pointer-events:none;background:rgba(239,225,187,.92);box-shadow:0 7px 16px rgba(44,57,53,.11);transition:.15s;z-index:3}
+.award b{top:74px;padding:7px 8px 3px!important;font-size:12px!important}.award small{top:98px;padding:3px 8px 7px!important;font-size:9px!important}
+.award:hover b,.award:hover small,.award:focus-within b,.award:focus-within small{opacity:1}
+.wall-back{background:rgba(238,223,184,.76)!important;border:0!important;color:#3e5350!important;padding:9px 15px!important;box-shadow:0 7px 16px rgba(44,57,53,.11)!important;clip-path:polygon(3% 7%,98% 0,100% 92%,5% 100%)!important}
+
+/* 档案柜：不要“20张列表卡”；变成俯视打开抽屉里的错落纸夹/标签。 */
+.archive-scene{background:radial-gradient(ellipse at 50% 18%,#a58a6e,#746150 74%)!important;padding:5vh 4vw 8vh!important}
+.archive-drawer{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:14px 18px!important;align-content:start!important;max-width:1180px!important;min-height:84vh!important;padding:92px 64px 70px!important;background:linear-gradient(155deg,#695847,#584c40)!important;box-shadow:inset 0 0 0 11px rgba(35,43,40,.26),inset 0 30px 40px rgba(0,0,0,.08),18px 22px rgba(33,45,43,.15)!important;clip-path:polygon(1% 1%,99% 0,100% 98%,0 100%)!important}
+.archive-drawer::before{content:"打开的档案抽屉"!important;left:auto!important;right:5%!important;top:25px!important;color:#ddc894!important;font:900 12px/1 var(--hand)!important;letter-spacing:.12em!important}
+.archive-drawer h2{grid-column:1/-1!important;margin:0 0 10px!important;font-size:clamp(24px,2.8vw,39px)!important;color:#ebd8aa!important}
+.file-row{position:relative!important;width:auto!important;min-height:84px!important;margin:0!important;padding:35px 13px 12px!important;background:linear-gradient(165deg,#d7bd83,#c4a56f)!important;box-shadow:0 6px 10px rgba(32,41,38,.16)!important;clip-path:polygon(0 14%,19% 14%,24% 0,58% 0,64% 13%,100% 13%,97% 100%,2% 96%)!important;transform:rotate(calc((var(--fi) - 2)*.6deg))!important;text-align:left!important;border:0!important;color:#354845!important;overflow:visible!important}
+.file-row:nth-of-type(4n+1){background:linear-gradient(160deg,#c8b17b,#b89b69)!important}.file-row:nth-of-type(4n+2){background:linear-gradient(160deg,#dbc78e,#c9ad78)!important}.file-row:nth-of-type(4n+3){background:linear-gradient(160deg,#bcae87,#aa9873)!important}
+.file-row strong{display:block!important;font:900 12px/1.35 var(--hand)!important}.file-row span{display:block!important;margin-top:4px;font:700 9px/1.35 var(--hand)!important;opacity:.67!important}
+.file-row:hover,.file-row:focus-visible{transform:translateY(-8px) rotate(0)!important;filter:brightness(1.05)!important;z-index:4!important}
+.empty-file{opacity:.2!important;filter:saturate(.25)!important}
+
+/* 完成反馈：不再弹一张“完成卡”，只在场景角落留下处理记录和离场动作。 */
+.scene-resolution{right:3.3%!important;bottom:4%!important;width:min(390px,34vw)!important;padding:10px 0 7px 15px!important;background:transparent!important;border:0!important;border-left:3px solid rgba(62,81,76,.35)!important;box-shadow:none!important;backdrop-filter:none!important;color:#344945!important}
+.scene-resolution .result-mark{display:inline-block!important;margin-bottom:5px!important;padding:3px 6px!important;border:2px solid rgba(164,83,68,.56)!important;transform:rotate(-2deg)!important;background:rgba(239,223,183,.25)!important}
+.scene-resolution p{font-size:13px!important;line-height:1.55!important;text-shadow:0 1px rgba(255,255,255,.55)!important}
+.scene-resolution small{font-size:9px!important}.scene-resolution .return-tab{background:transparent!important;box-shadow:none!important}
+
+@media(max-width:720px){
+ .archive-drawer{grid-template-columns:repeat(2,minmax(0,1fr))!important;padding:72px 15px 62px!important;gap:10px!important}.file-row{min-height:76px!important;padding:31px 10px 10px!important}.file-row strong{font-size:10px!important}.file-row span{font-size:8px!important}
+ .award{width:80px!important}.award::before{width:60px!important;height:60px!important}.award b{top:62px!important}.award small{top:85px!important}
+ .scene-resolution{left:15px!important;right:15px!important;bottom:10px!important;width:auto!important;padding-left:12px!important}
+}
+
+/* V4.4：档案不是“卡片网格”，而是抽屉里三摞真正重叠的卷宗。 */
+.archive-drawer{display:block!important;overflow:hidden!important;padding:92px 58px 80px!important}
+.archive-drawer h2{margin-bottom:35px!important}
+.file-row{display:block!important;width:56%!important;min-height:62px!important;margin-top:-28px!important;padding:29px 17px 10px!important;transform:translateX(var(--pile-x,0)) rotate(var(--pile-r,-1deg))!important;transition:.17s ease!important}
+.file-row.pile-0{--pile-x:0%;--pile-r:-1.2deg}.file-row.pile-1{--pile-x:36%;--pile-r:.7deg}.file-row.pile-2{--pile-x:69%;--pile-r:-.4deg;width:50%!important}
+.file-row:nth-of-type(5n+1){margin-top:-23px!important}.file-row:nth-of-type(7n+2){margin-top:-34px!important}
+.file-row strong{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.file-row span{opacity:0!important;max-height:0!important;overflow:hidden!important;transition:.15s!important}
+.file-row:hover,.file-row:focus-visible{transform:translateX(var(--pile-x,0)) translateY(-15px) rotate(0)!important;z-index:30!important;filter:brightness(1.06)!important}
+.file-row:hover span,.file-row:focus-visible span{opacity:.68!important;max-height:40px!important;margin-top:4px!important}
+@media(max-width:720px){.archive-drawer{padding:74px 15px 66px!important}.file-row{width:74%!important;margin-top:-21px!important;padding:27px 11px 9px!important}.file-row.pile-0{--pile-x:0%}.file-row.pile-1{--pile-x:20%}.file-row.pile-2{--pile-x:39%;width:72%!important}}

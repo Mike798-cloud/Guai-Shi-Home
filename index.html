@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN" data-v10="1" data-v101="1" data-v103="1">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1112" />
+  <meta name="color-scheme" content="dark" />
+  <title>怪事屋</title>
+  <meta name="description" content="一款关于给不太正常的东西解决正常生活问题的轻喜剧网页解谜游戏。" />
+  <link rel="stylesheet" href="styles/production.css" />
+</head>
+<body data-scene="street">
+  <svg class="svg-defs" aria-hidden="true" width="0" height="0">
+    <defs>
+      <filter id="rough" x="-12%" y="-12%" width="124%" height="124%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.009 0.021" numOctaves="2" seed="11" result="noise"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.15" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <filter id="wobble" x="-16%" y="-16%" width="132%" height="132%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="1" seed="4" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="2.2"/>
+      </filter>
+      <filter id="ink-shadow" x="-40%" y="-40%" width="180%" height="200%">
+        <feDropShadow dx="3" dy="6" stdDeviation="1.2" flood-color="#26383a" flood-opacity=".18"/>
+      </filter>
+      <filter id="soft-shadow" x="-30%" y="-30%" width="160%" height="180%">
+        <feDropShadow dx="2" dy="5" stdDeviation="1.7" flood-color="#203234" flood-opacity=".18"/>
+      </filter>
+    </defs>
+  </svg>
+  <main id="app" class="app" aria-live="polite"></main>
+  <div id="subtitle" class="subtitle" aria-live="polite"></div>
+  <nav id="system-controls" class="system-controls" aria-label="系统控制">
+    <button id="btn-office" class="sys-btn sys-home" title="返回怪事屋" aria-label="返回怪事屋"><span>屋</span></button>
+    <button id="btn-wall" class="sys-btn sys-award" title="荣誉墙" aria-label="荣誉墙"><span>奖</span></button>
+    <button id="btn-settings" class="sys-btn sys-more" title="设置" aria-label="设置"><span>···</span></button>
+  </nav>
+  <div id="toast" class="toast" aria-live="assertive"></div>
+  <script src="scripts/content.js"></script>
+  <script src="scripts/v10-physics.js"></script>
+  <script src="scripts/events.js"></script>
+  <script src="scripts/v10-audio.js"></script>
+  <script src="scripts/app.js"></script>
+  <script src="scripts/v6.js"></script>
+  <script src="scripts/v9.js"></script>
+  <script src="assets/mesh_v103/mesh-data.js"></script>
+  <script src="scripts/v10.js"></script>
+</body>
+</html>
